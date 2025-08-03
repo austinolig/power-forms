@@ -32,3 +32,65 @@ Since the project is in initial planning phase, standard Next.js commands apply:
 - Use JSON storage for flexible form configurations and submission data
 - Follow the real-time preview architecture: shared JSON schema drives both builder and preview
 - Implement conditional logic with client-side rule evaluation for performance
+
+## Development Workflow
+
+### Feature Implementation Process
+1. **Planning Phase**: Define testing strategy and acceptance criteria before coding
+2. **Implementation Phase**: Write tests alongside code, not after
+3. **Completion Phase**: Verify test coverage meets quality gates
+4. **Documentation Phase**: Update all relevant docs before feature is considered done
+
+### Testing Requirements
+**Before Starting Any Feature:**
+- Identify what needs testing (components, logic, integrations, edge cases)
+- Define measurable acceptance criteria with clear pass/fail outcomes
+- Choose appropriate testing approaches (unit/integration/e2e)
+- Document testing plan in feature branch or PR description
+
+### Live Documentation Standards
+**All Documentation Must Stay Current:**
+- Update AGENTS.md when adding new tools, patterns, or conventions
+- Update README.md when changing core functionality or user experience
+- Update requirements when scope, features, or architecture changes
+- No feature is complete without corresponding documentation updates
+
+### Definition of Done
+**Feature Completion Checklist:**
+- [ ] Tests written and passing for new functionality
+- [ ] Existing tests still pass (regression testing)
+- [ ] Documentation updated to reflect changes
+- [ ] Code reviewed and approved
+- [ ] Integration tested with existing features
+- [ ] Performance impact assessed and acceptable
+
+### Continuous Delivery Practices
+**Always Maintain Working State:**
+- Run full test suite before every commit
+- Ensure main branch always builds and deploys successfully
+- Use feature flags or branches for incomplete features
+- Deploy frequently with confidence through automated testing
+
+## GitHub Workflow
+
+### Issue-Driven Development Process
+1. **Create Issue**: Document feature/bug with acceptance criteria (aligns with **Testing Requirements**)
+2. **Create Branch**: Branch from main using `issue-{number}-{brief-description}` format
+3. **Follow Development Workflow**: Execute the 4-phase **Feature Implementation Process** above
+4. **Commit & Push**: Run **Build/Test Commands** before commits, push to feature branch
+5. **Create Pull Request**: Include testing summary (per **Testing Requirements**)
+6. **Code Review**: Ensure **Definition of Done** checklist is complete
+7. **Merge & Close**: Squash merge to main, maintaining **Continuous Delivery Practices**
+
+### Branch Naming Convention
+- Format: `issue-{number}-{brief-description}`
+- Examples: `issue-23-add-conditional-logic`, `issue-45-fix-mobile-preview`
+- Use camelCase for descriptions (consistent with **Code Style Guidelines**)
+
+### Pull Request Requirements
+**Must satisfy Definition of Done before merge:**
+- [ ] All **Build/Test Commands** pass (`npm test`, `npm run lint`, `npm run type-check`)
+- [ ] **Live Documentation Standards** met (AGENTS.md, README.md, requirements updated)
+- [ ] Code follows **Code Style Guidelines** (TypeScript, naming conventions, error handling)
+- [ ] Testing plan documented and executed per **Testing Requirements**
+- [ ] **Continuous Delivery Practices** maintained (main branch stays deployable)
