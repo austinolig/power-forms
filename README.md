@@ -21,6 +21,7 @@ PowerForms is a fast, intuitive form builder and data collector designed for non
 ## Technology Stack
 
 ### Frontend
+
 - **Next.js** - Full-stack React framework with App Router
 - **React** - Component-based UI with TypeScript
 - **Tailwind CSS** - Utility-first styling framework
@@ -28,21 +29,25 @@ PowerForms is a fast, intuitive form builder and data collector designed for non
 - **@dnd-kit** - Drag-and-drop form builder interface
 
 ### Forms & Validation
+
 - **React Hook Form** - Performant form handling
 - **Zod** - Schema validation for type-safe forms
 
 ### Backend & Database
+
 - **Next.js API Routes** - Serverless backend functions
 - **Prisma ORM** - Type-safe database operations
 - **Neon Postgres** - Managed PostgreSQL database
 
 ### Deployment
+
 - **Vercel** - Edge-optimized hosting with automatic deployments
 
 ## Getting Started
 
 ### Prerequisites
-- Node.js 18+ 
+
+- Node.js 18+
 - npm or yarn
 - PostgreSQL database (Neon recommended)
 
@@ -78,12 +83,15 @@ npm run start        # Start production server
 npm run lint         # Run ESLint
 npm run type-check   # Run TypeScript checks
 npm test             # Run tests
-npm test -- --testNamePattern="specific test"  # Run single test
+npm run test:watch   # Run tests in watch mode
+npm run format       # Format code with Prettier
+npm run format:check # Check code formatting
 ```
 
 ## Core Features
 
 ### Form Builder
+
 - **Drag-and-Drop Interface**: Visual field placement with intuitive controls
 - **Field Types**: textarea, select, radio group, checkbox
 - **Real-Time Preview**: Live preview updates as you build
@@ -92,12 +100,14 @@ npm test -- --testNamePattern="specific test"  # Run single test
 - **Styling Options**: Basic color customization for branding
 
 ### Dashboard
+
 - **Public Forms Gallery**: No authentication required
 - **Form Management**: Edit, duplicate, delete, and share forms
 - **Quick Statistics**: Submission counts and completion rates
 - **Responsive Design**: Works on desktop and mobile
 
 ### Response Management
+
 - **Data Collection**: Anonymous form submissions
 - **Response Viewer**: Clean table view of all submissions
 - **CSV Export**: Download responses for external analysis
@@ -113,8 +123,9 @@ npm test -- --testNamePattern="specific test"  # Run single test
 4. **Data Management**: View responses → Export to CSV → Analyze externally
 
 ### Target Users
+
 - HR managers and recruiters
-- Event organizers and coordinators  
+- Event organizers and coordinators
 - Marketing teams and agencies
 - Operations and administrative staff
 - Anyone needing quick data collection
@@ -122,6 +133,7 @@ npm test -- --testNamePattern="specific test"  # Run single test
 ## Database Schema
 
 ### Forms Table
+
 ```sql
 forms {
   id: uuid (primary key)
@@ -135,6 +147,7 @@ forms {
 ```
 
 ### Submissions Table
+
 ```sql
 submissions {
   id: uuid (primary key)
