@@ -50,14 +50,14 @@ PowerForms is a fast, intuitive form builder and data collector designed for non
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/power-forms.git
+git clone https://github.com/austinolig/power-forms.git
 cd power-forms
 
 # Install dependencies
 npm install
 
 # Set up environment variables
-cp .env.example .env.local
+cp .env.local
 
 # Set up database
 npx prisma migrate dev
