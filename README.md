@@ -88,6 +88,12 @@ npm test             # Run tests
 npm run test:watch   # Run tests in watch mode
 npm run format       # Format code with Prettier
 npm run format:check # Check code formatting
+
+# Database commands
+npm run db:generate  # Generate Prisma client
+npm run db:migrate   # Run database migrations
+npm run db:push      # Push schema changes without migrations
+npm run db:studio    # Open Prisma Studio (database GUI)
 ```
 
 ## Core Features
