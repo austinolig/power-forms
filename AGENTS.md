@@ -73,14 +73,47 @@ Since the project is in initial planning phase, standard Next.js commands apply:
 
 ## GitHub Workflow
 
+### Label System
+**Issue Type:**
+- `feature` - New functionality or capability
+- `enhancement` - Improving existing functionality  
+- `bug` - Error fixes and unexpected behavior
+- `documentation` - Writing/updating docs
+- `chore` - Maintenance tasks (dependencies, tooling)
+
+**Priority (aligned with MVP phases):**
+- `priority: critical` - Blockers that prevent development
+- `priority: high` - Phase 1 (Core MVP) features
+- `priority: medium` - Phase 2 (Enhanced MVP) features  
+- `priority: low` - Phase 3 (Polish & Optimization) features
+
+**Development Phase:**
+- `phase-1: core-mvp` - Must-have foundation features
+- `phase-2: enhanced-mvp` - Should-have advanced features
+- `phase-3: polish` - Nice-to-have optimization features
+
+**Technical Area:**
+- `area: frontend` - UI/UX, React components, styling
+- `area: backend` - API routes, database, server logic
+- `area: database` - Schema, migrations, data modeling
+- `area: infrastructure` - Build, deploy, monitoring
+- `area: testing` - Test implementation and coverage
+
+**Status (GitHub workflow states):**
+- `status: ready` - Planned and ready to start
+- `status: in-progress` - Actively being worked on
+- `status: in-review` - PR open, awaiting review
+- `status: blocked` - Cannot proceed due to dependencies
+
 ### Issue-Driven Development Process
-1. **Create Issue**: Document feature/bug with acceptance criteria (aligns with **Testing Requirements**)
+1. **Create Issue**: Document feature/bug with acceptance criteria and appropriate labels
 2. **Create Branch**: Branch from main using `issue-{number}-{brief-description}` format
 3. **Follow Development Workflow**: Execute the 4-phase **Feature Implementation Process** above
-4. **Commit & Push**: Run **Build/Test Commands** before commits, push to feature branch
-5. **Create Pull Request**: Include testing summary (per **Testing Requirements**)
-6. **Code Review**: Ensure **Definition of Done** checklist is complete
-7. **Merge & Close**: Squash merge to main, maintaining **Continuous Delivery Practices**
+4. **Update Status**: Change label from `status: ready` to `status: in-progress`
+5. **Commit & Push**: Run **Build/Test Commands** before commits, push to feature branch
+6. **Create Pull Request**: Include testing summary, change label to `status: in-review`
+7. **Code Review**: Ensure **Definition of Done** checklist is complete
+8. **Merge & Close**: Squash merge to main, maintaining **Continuous Delivery Practices**
 
 ### Branch Naming Convention
 - Format: `issue-{number}-{brief-description}`
