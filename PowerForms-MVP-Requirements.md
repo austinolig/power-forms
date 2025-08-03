@@ -239,7 +239,7 @@ submissions {
 **State Management:**
 - **Zustand**: Lightweight state management for form builder state
 - **React Hook Form**: Local form state management
-- **Server State**: SWR or TanStack Query for API data synchronization
+- **Server State**: TanStack Query for API data synchronization
 
 **Real-Time Preview Implementation:**
 - **Shared Schema**: Same JSON configuration drives both builder and preview
