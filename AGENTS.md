@@ -137,17 +137,21 @@ PowerForms is a modern form builder and data collector built with Next.js, React
 
 ### Issue-Driven Development Process
 
+**CRITICAL: Every issue MUST be completed with a Pull Request. Never mark an issue as complete without creating a PR.**
+
 1. **Create Issue**: Document feature/bug with acceptance criteria and appropriate labels
 2. **Start Work**: Change label from `status: ready` to `status: in-progress`
 3. **Create Branch**: Branch from main using `issue-{number}-{brief-description}` format
 4. **Follow Development Workflow**: Execute the 4-phase **Feature Implementation Process** above
 5. **Commit & Push**: Run **Build/Test Commands** before commits, push to feature branch
 6. **Mark for Review**: Change label from `status: in-progress` to `status: in-review`
-7. **Create Pull Request**: Include testing summary and link to issue, use PR template format
+7. **Create Pull Request**: MANDATORY - Include testing summary and link to issue, use PR template format
 8. **Code Review**: Ensure **Definition of Done** checklist is complete
 9. **Merge PR**: Squash merge to main, which automatically closes the linked issue
 10. **Final Status**: Mark the closed issue with `status: done` label
 11. **Queue Next Issue**: Mark the next logical sequential issue with `status: ready` to maintain development flow
+
+**⚠️ IMPORTANT: Steps 7-9 are MANDATORY for every issue. No exceptions.**
 
 ### Branch Naming Convention
 
