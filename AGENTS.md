@@ -76,6 +76,15 @@ PowerForms is a modern form builder and data collector built with Next.js, React
 - [ ] Integration tested with existing features
 - [ ] Performance impact assessed and acceptable
 
+### Continuous Development Flow
+
+**Issue Queue Management:**
+
+- When marking an issue as `status: done`, immediately mark the next sequential issue as `status: ready`
+- This ensures continuous development momentum and clear priorities
+- Follow numerical order (e.g., when #1 is done, mark #2 as ready)
+- Only one issue should be `status: in-progress` at a time to maintain focus
+
 ### Continuous Delivery Practices
 
 **Always Maintain Working State:**
@@ -87,16 +96,6 @@ PowerForms is a modern form builder and data collector built with Next.js, React
 
 ## GitHub Workflow
 
-<<<<<<< HEAD
-### Issue-Driven Development Process
-1. **Create Issue**: Document feature/bug with acceptance criteria (aligns with **Testing Requirements**)
-2. **Create Branch**: Branch from main using `issue-{number}-{brief-description}` format
-3. **Follow Development Workflow**: Execute the 4-phase **Feature Implementation Process** above
-4. **Commit & Push**: Run **Build/Test Commands** before commits, push to feature branch
-5. **Create Pull Request**: Include testing summary (per **Testing Requirements**)
-6. **Code Review**: Ensure **Definition of Done** checklist is complete
-7. **Merge & Close**: Squash merge to main, maintaining **Continuous Delivery Practices**
-=======
 ### Label System
 
 **Issue Type:**
@@ -141,14 +140,14 @@ PowerForms is a modern form builder and data collector built with Next.js, React
 1. **Create Issue**: Document feature/bug with acceptance criteria and appropriate labels
 2. **Start Work**: Change label from `status: ready` to `status: in-progress`
 3. **Create Branch**: Branch from main using `issue-{number}-{brief-description}` format
-4. **Follow Development Workflow**: Execute the 4-phase **Feature Implementation Process** above
-5. **Commit & Push**: Run **Build/Test Commands** before commits, push to feature branch
-6. **Mark for Review**: Change label from `status: in-progress` to `status: in-review`
-7. **Create Pull Request**: Include testing summary and link to issue, use PR template format
+4. **Update Status**: Change label from `status: ready` to `status: in-progress`
+5. **Follow Development Workflow**: Execute the 4-phase **Feature Implementation Process** above
+6. **Commit & Push**: Run **Build/Test Commands** before commits, push to feature branch
+7. **Create Pull Request**: Include testing summary, change label to `status: in-review`
 8. **Code Review**: Ensure **Definition of Done** checklist is complete
-9. **Merge PR**: Squash merge to main, which automatically closes the linked issue
+9. **Merge & Close**: Squash merge to main, maintaining **Continuous Delivery Practices**
 10. **Final Status**: Mark the closed issue with `status: done` label
->>>>>>> 1890f69 (feat: Setup Next.js project structure with complete tooling (#25))
+11. **Queue Next Issue**: Mark the next logical sequential issue with `status: ready` to maintain development flow
 
 ### Branch Naming Convention
 
@@ -170,20 +169,24 @@ PowerForms is a modern form builder and data collector built with Next.js, React
 
 **PR Template Format:**
 
-```
+```markdown
 ## Summary
+
 - Brief bullet points of what was implemented/changed
 
 ## Acceptance Criteria Completed
+
 - [ ] List each acceptance criteria from the issue
 - [ ] Mark as completed with checkboxes
 
 ## Testing Completed
+
 - [ ] All build commands pass
 - [ ] Manual testing performed
 - [ ] Integration with existing features verified
 
 ## Documentation Updated
+
 - [ ] AGENTS.md updated if needed
 - [ ] README.md updated if needed
 - [ ] Code comments added where necessary
