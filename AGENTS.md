@@ -76,6 +76,15 @@ PowerForms is a modern form builder and data collector built with Next.js, React
 - [ ] Integration tested with existing features
 - [ ] Performance impact assessed and acceptable
 
+### Continuous Development Flow
+
+**Issue Queue Management:**
+
+- When marking an issue as `status: done`, immediately mark the next sequential issue as `status: ready`
+- This ensures continuous development momentum and clear priorities
+- Follow numerical order (e.g., when #1 is done, mark #2 as ready)
+- Only one issue should be `status: in-progress` at a time to maintain focus
+
 ### Continuous Delivery Practices
 
 **Always Maintain Working State:**
@@ -138,6 +147,7 @@ PowerForms is a modern form builder and data collector built with Next.js, React
 8. **Code Review**: Ensure **Definition of Done** checklist is complete
 9. **Merge PR**: Squash merge to main, which automatically closes the linked issue
 10. **Final Status**: Mark the closed issue with `status: done` label
+11. **Queue Next Issue**: Mark the next logical sequential issue with `status: ready` to maintain development flow
 
 ### Branch Naming Convention
 
