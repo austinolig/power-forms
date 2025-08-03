@@ -4,7 +4,7 @@
 
 PowerForms is a fast, intuitive form builder and data collector designed for non-technical users who need professional-looking forms without the complexity of traditional form builders.
 
-[Live Demo](#) - Coming soon
+[Live Demo](https://power-forms.vercel.app) - Live on Vercel
 
 ## Vision
 
@@ -50,6 +50,7 @@ PowerForms is a fast, intuitive form builder and data collector designed for non
 - Node.js 18+
 - npm or yarn
 - PostgreSQL database (Neon recommended)
+- Environment variables (see installation section)
 
 ### Installation
 
@@ -62,7 +63,8 @@ cd power-forms
 npm install
 
 # Set up environment variables
-cp .env.local
+# DATABASE_URL="your-postgres-connection-string"
+touch .env.local
 
 # Set up database
 npx prisma migrate dev
@@ -160,6 +162,7 @@ submissions {
 
 ## Links
 
+- [Live Demo](https://power-forms.vercel.app) - Production deployment on Vercel
 - [Requirements Document](PowerForms-MVP-Requirements.md) - Detailed project specifications
 
 ---
