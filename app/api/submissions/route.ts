@@ -3,7 +3,7 @@ import { createSubmission, getSubmissions } from "@/lib/db-operations";
 
 export async function POST(request: NextRequest) {
   try {
-    const { formId, data, ipAddress } = await request.json();
+    const { formId, data } = await request.json();
 
     if (!formId || !data) {
       return NextResponse.json(
@@ -12,7 +12,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const result = await createSubmission(formId, data, ipAddress);
+    const result = await createSubmission(formId, data);
 
     if (!result.success) {
       return NextResponse.json({ error: result.error }, { status: 500 });

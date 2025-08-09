@@ -1,20 +1,18 @@
 import { prisma } from "./database";
-import type { InputJsonValue } from "@prisma/client/runtime/library";
+import type { Prisma } from "@prisma/client";
 
 export type CreateFormData = {
   title: string;
   description?: string;
-  fields: InputJsonValue[];
-  settings?: InputJsonValue;
+  fields: Prisma.InputJsonValue[];
+  settings?: Prisma.InputJsonValue;
 };
 
 export type UpdateFormData = Partial<CreateFormData>;
 
 export async function createForm(data: CreateFormData) {
   try {
-    const form = await prisma.form.create({
-      data,
-    });
+    const form = await prisma.form.create({ data });
     return { success: true, data: form };
   } catch (error) {
     console.error("Error creating form:", error);
@@ -47,19 +45,23 @@ export async function getForm(id: string) {
 
 export async function getForms(limit = 10, offset = 0) {
   try {
-    const forms = await prisma.form.findMany({
-      orderBy: { createdAt: "desc" },
-      take: limit,
-      skip: offset,
-      include: {
-        _count: {
-          select: { submissions: true },
+    const [forms, total] = await Promise.all([
+      prisma.form.findMany({
+        orderBy: { createdAt: "desc" },
+        take: limit,
+        skip: offset,
+        select: {
+          id: true,
+          title: true,
+          description: true,
+          createdAt: true,
+          updatedAt: true,
+          // omit fields/settings to reduce payload size
+          _count: { select: { submissions: true } },
         },
-      },
-    });
-
-    const total = await prisma.form.count();
-
+      }),
+      prisma.form.count(),
+    ]);
     return {
       success: true,
       data: { forms, total, hasMore: offset + limit < total },
@@ -97,15 +99,13 @@ export async function deleteForm(id: string) {
 
 export async function createSubmission(
   formId: string,
-  data: InputJsonValue,
-  ipAddress?: string
+  data: Prisma.InputJsonValue
 ) {
   try {
     const submission = await prisma.submission.create({
       data: {
         formId,
         data,
-        ipAddress,
       },
     });
     return { success: true, data: submission };
@@ -117,17 +117,15 @@ export async function createSubmission(
 
 export async function getSubmissions(formId: string, limit = 50, offset = 0) {
   try {
-    const submissions = await prisma.submission.findMany({
-      where: { formId },
-      orderBy: { submittedAt: "desc" },
-      take: limit,
-      skip: offset,
-    });
-
-    const total = await prisma.submission.count({
-      where: { formId },
-    });
-
+    const [submissions, total] = await Promise.all([
+      prisma.submission.findMany({
+        where: { formId },
+        orderBy: { submittedAt: "desc" },
+        take: limit,
+        skip: offset,
+      }),
+      prisma.submission.count({ where: { formId } }),
+    ]);
     return {
       success: true,
       data: { submissions, total, hasMore: offset + limit < total },

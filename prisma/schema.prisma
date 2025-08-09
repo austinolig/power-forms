@@ -15,9 +15,10 @@ model Form {
   settings    Json?
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
-  
+
   submissions Submission[]
 
+  @@index([createdAt(sort: Desc)])
   @@map("forms")
 }
 
@@ -26,9 +27,9 @@ model Submission {
   formId      String   @map("form_id")
   data        Json
   submittedAt DateTime @default(now()) @map("submitted_at")
-  ipAddress   String?  @map("ip_address")
 
   form Form @relation(fields: [formId], references: [id], onDelete: Cascade)
 
+  @@index([formId, submittedAt(sort: Desc)])
   @@map("submissions")
 }
