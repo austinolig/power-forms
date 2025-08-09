@@ -1,0 +1,238 @@
+import { prisma } from "@/lib/database";
+import {
+  createForm,
+  getForm,
+  getForms,
+  updateForm,
+  deleteForm,
+  createSubmission,
+  getSubmissions,
+} from "@/lib/db-operations";
+
+const TEST_FORM_DATA = { title: "form title", fields: [] };
+const TEST_SUBMISSION_DATA = { field: "response" };
+const NON_EXISTENT_ID = "non-existent-id";
+
+const useFormId = async () => {
+  const form = await createForm(TEST_FORM_DATA);
+  return form.id;
+};
+
+describe("Database Operations", () => {
+  beforeEach(async () => {
+    await prisma.form.deleteMany({});
+    await prisma.submission.deleteMany({});
+  });
+
+  afterAll(async () => {
+    prisma.$disconnect();
+  });
+
+  describe("createForm", () => {
+    test("should create a form successfully", async () => {
+      const result = await createForm(TEST_FORM_DATA);
+
+      expect(result.success).toBe(true);
+      expect(result.data?.id).toBeDefined();
+      expect(result.data?.title).toBe(TEST_FORM_DATA.title);
+    });
+
+    test("should return error when creating form with missing title", async () => {
+      const consoleErrorSpy = jest
+        .spyOn(console, "error")
+        .mockImplementation(() => {});
+
+      const result = await createForm({} as unknown as CreateFormData);
+
+      expect(result.success).toBe(false);
+      expect(result.error).toBe("Failed to create form");
+
+      consoleErrorSpy.mockRestore();
+    });
+  });
+
+  describe("getForm", () => {
+    test("should return a form with submissions successfully when form exists", async () => {
+      const formId = await useFormId();
+      const result = await getForm(formId);
+
+      expect(result.success).toBe(true);
+      expect(result.data?.id).toBe(formId);
+      expect(result.data?.title).toBe(TEST_FORM_DATA.title);
+      expect(result.data?.submissions).toEqual([]);
+    });
+
+    test("should return error for non-existent form ID", async () => {
+      const result = await getForm(NON_EXISTENT_ID);
+
+      expect(result.success).toBe(false);
+      expect(result.error).toBe("Form not found");
+    });
+  });
+
+  describe("getForms", () => {
+    test("should return empty list when no forms exist", async () => {
+      const result = await getForms();
+
+      expect(result.success).toBe(true);
+      expect(result.data?.forms).toEqual([]);
+      expect(result.data?.total).toBe(0);
+      expect(result.data?.hasMore).toBe(false);
+    });
+
+    test("should return forms with pagination", async () => {
+      await prisma.form.createMany({
+        data: [TEST_FORM_DATA, TEST_FORM_DATA, TEST_FORM_DATA],
+      });
+      const result = await getForms(2, 0);
+
+      expect(result.success).toBe(true);
+      expect(result.data?.forms).toHaveLength(2);
+      expect(result.data?.total).toBe(3);
+      expect(result.data?.hasMore).toBe(true);
+    });
+
+    test("should return correct pagination info for second page", async () => {
+      await prisma.form.createMany({
+        data: [TEST_FORM_DATA, TEST_FORM_DATA, TEST_FORM_DATA],
+      });
+      const result = await getForms(2, 2);
+
+      expect(result.success).toBe(true);
+      expect(result.data?.forms).toHaveLength(1);
+      expect(result.data?.total).toBe(3);
+      expect(result.data?.hasMore).toBe(false);
+    });
+
+    test("should include submission count", async () => {
+      const formId = await useFormId();
+      await createSubmission(formId, TEST_SUBMISSION_DATA);
+      const result = await getForms();
+
+      expect(result.success).toBe(true);
+      expect(result.data?.forms[0]._count?.submissions).toBe(1);
+    });
+  });
+
+  describe("updateForm", () => {
+    test("should update form successfully", async () => {
+      const formId = await useFormId();
+      const updateData = { title: "Updated Form" };
+      const result = await updateForm(formId, updateData);
+
+      expect(result.success).toBe(true);
+      expect(result.data?.title).toBe(updateData.title);
+    });
+
+    test("should return error for non-existent form ID", async () => {
+      const consoleErrorSpy = jest
+        .spyOn(console, "error")
+        .mockImplementation(() => {});
+
+      const result = await updateForm(NON_EXISTENT_ID, {
+        title: "Updated Form",
+      });
+
+      expect(result.success).toBe(false);
+      expect(result.error).toBe("Failed to update form");
+
+      consoleErrorSpy.mockRestore();
+    });
+  });
+
+  describe("deleteForm", () => {
+    test("should delete form successfully", async () => {
+      const formId = await useFormId();
+      const result = await deleteForm(formId);
+
+      expect(result.success).toBe(true);
+    });
+
+    test("should return error for non-existent form ID", async () => {
+      const consoleErrorSpy = jest
+        .spyOn(console, "error")
+        .mockImplementation(() => {});
+
+      const result = await deleteForm(NON_EXISTENT_ID);
+
+      expect(result.success).toBe(false);
+      expect(result.error).toBe("Failed to delete form");
+
+      consoleErrorSpy.mockRestore();
+    });
+  });
+
+  describe("createSubmission", () => {
+    test("should create submission successfully", async () => {
+      const formId = await useFormId();
+      const result = await createSubmission(formId, TEST_SUBMISSION_DATA);
+
+      expect(result.success).toBe(true);
+      expect(result.data?.formId).toBe(formId);
+      expect(result.data?.data).toEqual(TEST_SUBMISSION_DATA);
+    });
+
+    test("should return error for non-existent form ID", async () => {
+      const consoleErrorSpy = jest
+        .spyOn(console, "error")
+        .mockImplementation(() => {});
+
+      const result = await createSubmission(
+        NON_EXISTENT_ID,
+        TEST_SUBMISSION_DATA
+      );
+
+      expect(result.success).toBe(false);
+      expect(result.error).toBe("Failed to create submission");
+
+      consoleErrorSpy.mockRestore();
+    });
+  });
+
+  describe("getSubmissions", () => {
+    test("should return empty list when no submissions exist", async () => {
+      const formId = await useFormId();
+      const result = await getSubmissions(formId);
+
+      expect(result.success).toBe(true);
+      expect(result.data?.submissions).toEqual([]);
+      expect(result.data?.total).toBe(0);
+      expect(result.data?.hasMore).toBe(false);
+    });
+
+    test("should return submissions with pagination", async () => {
+      const formId = await useFormId();
+      const submissionInput = { formId, data: TEST_SUBMISSION_DATA };
+      await prisma.submission.createMany({
+        data: [submissionInput, submissionInput, submissionInput],
+      });
+      const result = await getSubmissions(formId, 2, 0);
+
+      expect(result.success).toBe(true);
+      expect(result.data?.submissions).toHaveLength(2);
+      expect(result.data?.total).toBe(3);
+      expect(result.data?.hasMore).toBe(true);
+    });
+
+    test("should return correct pagination info for second page", async () => {
+      const formId = await useFormId();
+      const submissionInput = { formId, data: TEST_SUBMISSION_DATA };
+      await prisma.submission.createMany({
+        data: [submissionInput, submissionInput, submissionInput],
+      });
+      const result = await getSubmissions(formId, 2, 2);
+
+      expect(result.success).toBe(true);
+      expect(result.data?.submissions).toHaveLength(1);
+      expect(result.data?.total).toBe(3);
+      expect(result.data?.hasMore).toBe(false);
+    });
+
+    test("should return empty list for non-existent form ID", async () => {
+      const result = await getSubmissions(NON_EXISTENT_ID);
+
+      expect(result.success).toBe(true);
+      expect(result.data?.submissions).toEqual([]);
+    });
+  });
+});
