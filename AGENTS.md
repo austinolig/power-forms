@@ -173,20 +173,24 @@ PowerForms is a modern form builder and data collector built with Next.js, React
 
 **PR Template Format:**
 
-```
+```markdown
 ## Summary
+
 - Brief bullet points of what was implemented/changed
 
 ## Acceptance Criteria Completed
+
 - [ ] List each acceptance criteria from the issue
 - [ ] Mark as completed with checkboxes
 
 ## Testing Completed
+
 - [ ] All build commands pass
 - [ ] Manual testing performed
 - [ ] Integration with existing features verified
 
 ## Documentation Updated
+
 - [ ] AGENTS.md updated if needed
 - [ ] README.md updated if needed
 - [ ] Code comments added where necessary
