@@ -1,13 +1,13 @@
 import { Prisma, Submission } from "@prisma/client";
 
-export type CreateFormData = {
+export type FormData = {
   title: string;
   description?: string;
-  fields: Prisma.InputJsonValue[];
+  fields: SubmissionData;
   settings?: Prisma.InputJsonValue;
 };
 
-export type UpdateFormData = Partial<CreateFormData>;
+export type PartialFormData = Partial<FormData>;
 
 export type FormsListItem = Prisma.FormGetPayload<{
   select: {
@@ -28,6 +28,8 @@ type PaginationMetadata = {
 export type FormsListResult = {
   forms: FormsListItem[];
 } & PaginationMetadata;
+
+export type SubmissionData = Prisma.InputJsonValue[];
 
 export type SubmissionsListResult = {
   submissions: Submission[];

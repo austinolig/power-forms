@@ -50,7 +50,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       switch (error.code) {
         case "P2003":
-          return NextResponse.json(errorResponse("Form not found"), {
+          return NextResponse.json(errorResponse("Related form not found"), {
             status: 404,
           });
         default:

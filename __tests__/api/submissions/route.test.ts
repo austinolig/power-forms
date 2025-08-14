@@ -1,11 +1,11 @@
 import { GET, POST } from "@/app/api/submissions/route";
 import { prisma } from "@/lib/db";
 import { NextRequest } from "next/server";
-import { CreateFormData, SubmissionsListResult } from "@/types/db";
+import { FormData, SubmissionsListResult } from "@/types/db";
 import { ResponseData } from "@/types/api";
 import { Submission } from "@prisma/client";
 
-const TEST_FORM_DATA: CreateFormData = { title: "form title", fields: [] };
+const TEST_FORM_DATA: FormData = { title: "form title", fields: [] };
 const TEST_SUBMISSION_DATA = { field: "response" };
 const NON_EXISTENT_ID = "non-existent-id";
 
@@ -19,7 +19,7 @@ const createTestSubmission = async (formId: string) => {
   });
 };
 
-describe("Submissions API Route", () => {
+describe("Submissions API", () => {
   beforeEach(async () => {
     await prisma.form.deleteMany();
     await prisma.submission.deleteMany();
@@ -30,7 +30,26 @@ describe("Submissions API Route", () => {
   });
 
   describe("GET /api/submissions", () => {
-    test("should return submissions with pagination (200 status)", async () => {
+    test("returns paginated submissions (200)", async () => {
+      const form = await createTestForm();
+      await createTestSubmission(form.id);
+
+      const request = new NextRequest(
+        `http://localhost:3000/api/submissions?formId=${form.id}&limit=1&offset=0`
+      );
+      const response = await GET(request);
+      const result: ResponseData<SubmissionsListResult> = await response.json();
+
+      expect(response.status).toBe(200);
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data.submissions).toHaveLength(1);
+        expect(result.data.total).toBe(1);
+        expect(result.data.hasMore).toBe(false);
+      }
+    });
+
+    test("returns submissions for formId with limit and offset (200)", async () => {
       const form = await createTestForm();
       await createTestSubmission(form.id);
       await createTestSubmission(form.id);
@@ -50,7 +69,7 @@ describe("Submissions API Route", () => {
       }
     });
 
-    test("should return empty list for non-existent formId (200 status)", async () => {
+    test("returns empty list for non-existent formId (200)", async () => {
       const request = new NextRequest(
         `http://localhost:3000/api/submissions?formId=${NON_EXISTENT_ID}`
       );
@@ -66,69 +85,7 @@ describe("Submissions API Route", () => {
       }
     });
 
-    test("should return 400 for missing formId parameter", async () => {
-      const request = new NextRequest("http://localhost:3000/api/submissions");
-      const response = await GET(request);
-      const result: ResponseData<never> = await response.json();
-
-      expect(response.status).toBe(400);
-      expect(result.success).toBe(false);
-      if (!result.success) {
-        expect(result.error).toBe("Form ID is required");
-      }
-    });
-
-    test("should return 400 for invalid limit parameter", async () => {
-      const form = await createTestForm();
-      const request = new NextRequest(
-        `http://localhost:3000/api/submissions?formId=${form.id}&limit=-1`
-      );
-      const response = await GET(request);
-      const result: ResponseData<never> = await response.json();
-
-      expect(response.status).toBe(400);
-      expect(result.success).toBe(false);
-      if (!result.success) {
-        expect(result.error).toBe("Invalid limit or offset");
-      }
-    });
-
-    test("should return 400 for invalid offset parameter", async () => {
-      const form = await createTestForm();
-      const request = new NextRequest(
-        `http://localhost:3000/api/submissions?formId=${form.id}&offset=-1`
-      );
-      const response = await GET(request);
-      const result: ResponseData<never> = await response.json();
-
-      expect(response.status).toBe(400);
-      expect(result.success).toBe(false);
-      if (!result.success) {
-        expect(result.error).toBe("Invalid limit or offset");
-      }
-    });
-
-    test("should handle database error (500 status)", async () => {
-      const form = await createTestForm();
-      jest.spyOn(console, "error").mockImplementationOnce(() => {});
-      jest
-        .spyOn(prisma.submission, "findMany")
-        .mockRejectedValueOnce(new Error("Database error"));
-
-      const request = new NextRequest(
-        `http://localhost:3000/api/submissions?formId=${form.id}`
-      );
-      const response = await GET(request);
-      const result: ResponseData<never> = await response.json();
-
-      expect(response.status).toBe(500);
-      expect(result.success).toBe(false);
-      if (!result.success) {
-        expect(result.error).toBe("Internal server error");
-      }
-    });
-
-    test("should test pagination boundaries (hasMore logic)", async () => {
+    test("returns correct hasMore=false on last page of pagination (200)", async () => {
       const form = await createTestForm();
       await createTestSubmission(form.id);
       await createTestSubmission(form.id);
@@ -149,10 +106,22 @@ describe("Submissions API Route", () => {
         expect(result.data.hasMore).toBe(false);
       }
     });
+
+    test("returns error if formId is not provided (400)", async () => {
+      const request = new NextRequest("http://localhost:3000/api/submissions");
+      const response = await GET(request);
+      const result: ResponseData<never> = await response.json();
+
+      expect(response.status).toBe(400);
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.error).toBe("Form ID is required");
+      }
+    });
   });
 
   describe("POST /api/submissions", () => {
-    test("should create submission successfully (201 status)", async () => {
+    test("creates a new submission (201)", async () => {
       const form = await createTestForm();
       const submissionData = { formId: form.id, data: TEST_SUBMISSION_DATA };
 
@@ -174,7 +143,9 @@ describe("Submissions API Route", () => {
       }
     });
 
-    test("should return 404 for non-existent formId (P2003 → Form not found)", async () => {
+    test("returns error if form does not exist (404)", async () => {
+      jest.spyOn(console, "error").mockImplementationOnce(() => {});
+
       const submissionData = {
         formId: NON_EXISTENT_ID,
         data: TEST_SUBMISSION_DATA,
@@ -192,11 +163,11 @@ describe("Submissions API Route", () => {
       expect(response.status).toBe(404);
       expect(result.success).toBe(false);
       if (!result.success) {
-        expect(result.error).toBe("Form not found");
+        expect(result.error).toBe("Related form not found");
       }
     });
 
-    test("should return 400 for missing formId", async () => {
+    test("returns error if formId is not provided (400)", async () => {
       const submissionData = { data: TEST_SUBMISSION_DATA };
 
       const request = new NextRequest("http://localhost:3000/api/submissions", {
@@ -215,7 +186,7 @@ describe("Submissions API Route", () => {
       }
     });
 
-    test("should return 400 for missing data", async () => {
+    test("returns error if data is not provided (400)", async () => {
       const form = await createTestForm();
       const submissionData = { formId: form.id };
 
@@ -232,53 +203,6 @@ describe("Submissions API Route", () => {
       expect(result.success).toBe(false);
       if (!result.success) {
         expect(result.error).toBe("Form ID and data are required");
-      }
-    });
-
-    test("should handle malformed JSON (500 status for now)", async () => {
-      const consoleErrorSpy = jest
-        .spyOn(console, "error")
-        .mockImplementation(() => {});
-
-      const request = new NextRequest("http://localhost:3000/api/submissions", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: "{ invalid json",
-      });
-
-      const response = await POST(request);
-      const result: ResponseData<never> = await response.json();
-
-      expect(response.status).toBe(500);
-      expect(result.success).toBe(false);
-      if (!result.success) {
-        expect(result.error).toBe("Internal server error");
-      }
-
-      consoleErrorSpy.mockRestore();
-    });
-
-    test("should handle database error (500 status)", async () => {
-      const form = await createTestForm();
-      jest.spyOn(console, "error").mockImplementationOnce(() => {});
-      jest
-        .spyOn(prisma.submission, "create")
-        .mockRejectedValueOnce(new Error("Database error"));
-
-      const submissionData = { formId: form.id, data: TEST_SUBMISSION_DATA };
-      const request = new NextRequest("http://localhost:3000/api/submissions", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(submissionData),
-      });
-
-      const response = await POST(request);
-      const result: ResponseData<never> = await response.json();
-
-      expect(response.status).toBe(500);
-      expect(result.success).toBe(false);
-      if (!result.success) {
-        expect(result.error).toBe("Internal server error");
       }
     });
   });

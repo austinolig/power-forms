@@ -1,18 +1,18 @@
 import { prisma } from "./db";
-import { Prisma } from "@prisma/client";
 import {
-  CreateFormData,
-  UpdateFormData,
+  FormData,
+  PartialFormData,
   FormsListResult,
   SubmissionsListResult,
+  SubmissionData,
 } from "@/types/db";
 
-export async function createForm(data: CreateFormData) {
-  return prisma.form.create({ data });
+export async function createForm(data: FormData) {
+  return await prisma.form.create({ data });
 }
 
 export async function getForm(id: string) {
-  return prisma.form.findUnique({
+  return await prisma.form.findUnique({
     where: { id },
     include: {
       submissions: {
@@ -46,19 +46,16 @@ export async function getForms(
   return { forms, total, hasMore: offset + limit < total };
 }
 
-export async function updateForm(id: string, data: UpdateFormData) {
-  return prisma.form.update({ where: { id }, data });
+export async function updateForm(id: string, data: PartialFormData) {
+  return await prisma.form.update({ where: { id }, data });
 }
 
 export async function deleteForm(id: string) {
-  return prisma.form.delete({ where: { id } });
+  return await prisma.form.delete({ where: { id } });
 }
 
-export async function createSubmission(
-  formId: string,
-  data: Prisma.InputJsonValue
-) {
-  return prisma.submission.create({ data: { formId, data } });
+export async function createSubmission(formId: string, data: SubmissionData) {
+  return await prisma.submission.create({ data: { formId, data } });
 }
 
 export async function getSubmissions(
