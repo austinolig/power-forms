@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getForm, updateForm, deleteForm } from "@/lib/db-operations";
-import { errorResponse, successResponse } from "@/utils/api";
+import { errorResponse, successResponse } from "@/lib/utils";
 import { Prisma } from "@prisma/client";
 
 export async function GET(
