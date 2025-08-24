@@ -172,7 +172,7 @@ Non-technical professionals across all organization sizes who need efficient dat
 
 **Responsive Design:**
 
-- **Mobile-First**: Optimized for smartphones and tablets
+- **Mobile-Friendly**: Optimized for smartphones and tablets
 - **Cross-Browser**: Works on all modern browsers
 - **Fast Loading**: Optimized performance for quick form access
 - **Progressive Enhancement**: Functions even with limited JavaScript support
