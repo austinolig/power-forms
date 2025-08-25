@@ -30,9 +30,13 @@ export function FormCard({ form }: FormCardProps) {
 		if (!confirm("Are you sure you want to delete this form?")) return;
 
 		try {
-			await deleteFormAction(form.id);
-			// Refresh the page to update the forms list
-			window.location.reload();
+			const result = await deleteFormAction(form.id);
+			if (result.success) {
+				// Refresh the page to update the forms list
+				window.location.reload();
+			} else {
+				alert(`Failed to delete form: ${result.error}`);
+			}
 		} catch (err) {
 			alert("Failed to delete form");
 			console.error("Delete error:", err);

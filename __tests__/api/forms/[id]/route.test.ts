@@ -28,15 +28,20 @@ describe("Form by ID Actions", () => {
 			const form = await createTestForm();
 			const result = await getFormAction(form.id);
 
-			expect(result.id).toBe(form.id);
-			expect(result.title).toBe(TEST_FORM_DATA.title);
-			expect(result.fields).toEqual(TEST_FORM_DATA.fields);
+			expect(result.success).toBe(true);
+			if (result.success) {
+				expect(result.data.id).toBe(form.id);
+				expect(result.data.title).toBe(TEST_FORM_DATA.title);
+				expect(result.data.fields).toEqual(TEST_FORM_DATA.fields);
+			}
 		});
 
-		test("throws error for non-existent form", async () => {
-			await expect(getFormAction(NON_EXISTENT_ID)).rejects.toThrow(
-				"Form not found"
-			);
+		test("returns error for non-existent form", async () => {
+			const result = await getFormAction(NON_EXISTENT_ID);
+			expect(result.success).toBe(false);
+			if (!result.success) {
+				expect(result.error).toBe("Form not found");
+			}
 		});
 	});
 
@@ -47,17 +52,22 @@ describe("Form by ID Actions", () => {
 
 			const result = await updateFormAction(form.id, updateData);
 
-			expect(result.title).toBe(updateData.title);
-			expect(result.id).toBe(form.id);
+			expect(result.success).toBe(true);
+			if (result.success) {
+				expect(result.data.title).toBe(updateData.title);
+				expect(result.data.id).toBe(form.id);
+			}
 		});
 
-		test("throws error for updating non-existent form", async () => {
+		test("returns error for updating non-existent form", async () => {
 			jest.spyOn(console, "error").mockImplementationOnce(() => {});
 
 			const updateData = { title: "Updated Form" };
-			await expect(
-				updateFormAction(NON_EXISTENT_ID, updateData)
-			).rejects.toThrow("Form not found");
+			const result = await updateFormAction(NON_EXISTENT_ID, updateData);
+			expect(result.success).toBe(false);
+			if (!result.success) {
+				expect(result.error).toBe("Form not found");
+			}
 		});
 	});
 
@@ -67,7 +77,10 @@ describe("Form by ID Actions", () => {
 
 			const result = await deleteFormAction(form.id);
 
-			expect(result.id).toBe(form.id);
+			expect(result.success).toBe(true);
+			if (result.success) {
+				expect(result.data.id).toBe(form.id);
+			}
 
 			// Verify form is actually deleted
 			const deletedForm = await prisma.form.findUnique({
@@ -76,18 +89,20 @@ describe("Form by ID Actions", () => {
 			expect(deletedForm).toBeNull();
 		});
 
-		test("throws error for deleting non-existent form", async () => {
+		test("returns error for deleting non-existent form", async () => {
 			jest.spyOn(console, "error").mockImplementationOnce(() => {});
-			await expect(deleteFormAction(NON_EXISTENT_ID)).rejects.toThrow(
-				"Form not found"
-			);
+			const result = await deleteFormAction(NON_EXISTENT_ID);
+			expect(result.success).toBe(false);
+			if (!result.success) {
+				expect(result.error).toBe("Form not found");
+			}
 		});
 
 		test("deletes submissions when form is deleted", async () => {
 			const form = await createTestForm();
 			// Create a submission for the form
 			await prisma.submission.create({
-				data: { formId: form.id, data: { field: "value" } },
+				data: { formId: form.id, data: [{ field: "value" }] },
 			});
 
 			// Verify submission exists
@@ -96,7 +111,8 @@ describe("Form by ID Actions", () => {
 			});
 			expect(submissionsBefore).toHaveLength(1);
 
-			await deleteFormAction(form.id);
+			const result = await deleteFormAction(form.id);
+			expect(result.success).toBe(true);
 
 			// Verify submissions are cascade deleted
 			const submissionsAfter = await prisma.submission.findMany({

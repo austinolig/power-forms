@@ -16,122 +16,128 @@ import type {
 	SubmissionsListResult,
 	SubmissionData,
 } from "@/types/db";
-import { Prisma } from "@prisma/client";
-
-/**
- * Server actions that replace API route logic and call into lib/db-operations.ts directly.
- * These mirror the validation and error handling from the original API routes.
- */
+import type { ResponseData } from "@/types/actions";
+import { Prisma, Form, Submission } from "@prisma/client";
+import { successResponse, errorResponse } from "./utils";
 
 export async function getFormsAction(
 	limit = 10,
 	offset = 0
-): Promise<FormsListResult> {
+): Promise<ResponseData<FormsListResult>> {
 	if (limit < 1 || offset < 0) {
-		throw new Error("Invalid limit or offset");
+		return errorResponse("Invalid limit or offset");
 	}
 
 	try {
-		return await getForms(limit, offset);
+		const result = await getForms(limit, offset);
+		return successResponse(result);
 	} catch (error) {
 		console.error("Forms action GET error:", error);
-		throw new Error("Internal server error");
+		return errorResponse("Internal server error");
 	}
 }
 
-export async function createFormAction(data: FormData) {
+export async function createFormAction(
+	data: FormData
+): Promise<ResponseData<Form>> {
 	if (!data.title || !data.fields) {
-		throw new Error("Title and fields are required");
+		return errorResponse("Title and fields are required");
 	}
 
 	try {
-		return await createForm(data);
+		const result = await createForm(data);
+		return successResponse(result);
 	} catch (error) {
 		console.error("Forms action POST error:", error);
 
 		if (error instanceof Prisma.PrismaClientKnownRequestError) {
-			throw new Error("Database error");
+			return errorResponse("Database error");
 		}
 
-		throw new Error("Internal server error");
+		return errorResponse("Internal server error");
 	}
 }
 
-export async function getFormAction(id: string) {
+export async function getFormAction(
+	id: string
+): Promise<ResponseData<Form & { submissions: Submission[] }>> {
 	if (!id) {
-		throw new Error("Form ID is required");
+		return errorResponse("Form ID is required");
 	}
 
 	try {
 		const result = await getForm(id);
 
 		if (!result) {
-			throw new Error("Form not found");
+			return errorResponse("Form not found");
 		}
 
-		return result;
+		return successResponse(result);
 	} catch (error) {
 		console.error("Form action GET error:", error);
 
-		if (error instanceof Error && error.message === "Form not found") {
-			throw error;
-		}
-
 		if (error instanceof Prisma.PrismaClientKnownRequestError) {
-			throw new Error("Database error");
+			return errorResponse("Database error");
 		}
 
-		throw new Error("Internal server error");
+		return errorResponse("Internal server error");
 	}
 }
 
-export async function updateFormAction(id: string, data: PartialFormData) {
+export async function updateFormAction(
+	id: string,
+	data: PartialFormData
+): Promise<ResponseData<Form>> {
 	if (!id) {
-		throw new Error("Form ID is required");
+		return errorResponse("Form ID is required");
 	}
 
 	if (data.title && data.title.length < 1) {
-		throw new Error("Title must be at least 1 character");
+		return errorResponse("Title must be at least 1 character");
 	}
 
 	try {
-		return await updateForm(id, data);
+		const result = await updateForm(id, data);
+		return successResponse(result);
 	} catch (error) {
 		console.error("Form action PUT error:", error);
 
 		if (error instanceof Prisma.PrismaClientKnownRequestError) {
 			switch (error.code) {
 				case "P2025":
-					throw new Error("Form not found");
+					return errorResponse("Form not found");
 				default:
-					throw new Error("Database error");
+					return errorResponse("Database error");
 			}
 		}
 
-		throw new Error("Internal server error");
+		return errorResponse("Internal server error");
 	}
 }
 
-export async function deleteFormAction(id: string) {
+export async function deleteFormAction(
+	id: string
+): Promise<ResponseData<Form>> {
 	if (!id) {
-		throw new Error("Form ID is required");
+		return errorResponse("Form ID is required");
 	}
 
 	try {
-		return await deleteForm(id);
+		const result = await deleteForm(id);
+		return successResponse(result);
 	} catch (error) {
 		console.error("Form action DELETE error:", error);
 
 		if (error instanceof Prisma.PrismaClientKnownRequestError) {
 			switch (error.code) {
 				case "P2025":
-					throw new Error("Form not found");
+					return errorResponse("Form not found");
 				default:
-					throw new Error("Database error");
+					return errorResponse("Database error");
 			}
 		}
 
-		throw new Error("Internal server error");
+		return errorResponse("Internal server error");
 	}
 }
 
@@ -139,45 +145,47 @@ export async function getSubmissionsAction(
 	formId: string,
 	limit = 50,
 	offset = 0
-): Promise<SubmissionsListResult> {
+): Promise<ResponseData<SubmissionsListResult>> {
 	if (!formId) {
-		throw new Error("Form ID is required");
+		return errorResponse("Form ID is required");
 	}
 
 	if (limit < 1 || offset < 0) {
-		throw new Error("Invalid limit or offset");
+		return errorResponse("Invalid limit or offset");
 	}
 
 	try {
-		return await getSubmissions(formId, limit, offset);
+		const result = await getSubmissions(formId, limit, offset);
+		return successResponse(result);
 	} catch (error) {
 		console.error("Submissions action GET error:", error);
-		throw new Error("Internal server error");
+		return errorResponse("Internal server error");
 	}
 }
 
 export async function createSubmissionAction(
 	formId: string,
 	data: SubmissionData
-) {
+): Promise<ResponseData<Submission>> {
 	if (!formId || !data) {
-		throw new Error("Form ID and data are required");
+		return errorResponse("Form ID and data are required");
 	}
 
 	try {
-		return await createSubmission(formId, data);
+		const result = await createSubmission(formId, data);
+		return successResponse(result);
 	} catch (error) {
 		console.error("Submissions action POST error:", error);
 
 		if (error instanceof Prisma.PrismaClientKnownRequestError) {
 			switch (error.code) {
 				case "P2003":
-					throw new Error("Related form not found");
+					return errorResponse("Related form not found");
 				default:
-					throw new Error("Database error");
+					return errorResponse("Database error");
 			}
 		}
 
-		throw new Error("Internal server error");
+		return errorResponse("Internal server error");
 	}
 }

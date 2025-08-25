@@ -18,9 +18,12 @@ describe("Forms Actions", () => {
 		test("returns paginated forms", async () => {
 			const result = await getFormsAction();
 
-			expect(result.forms).toHaveLength(0);
-			expect(result.total).toBe(0);
-			expect(result.hasMore).toBe(false);
+			expect(result.success).toBe(true);
+			if (result.success) {
+				expect(result.data.forms).toHaveLength(0);
+				expect(result.data.total).toBe(0);
+				expect(result.data.hasMore).toBe(false);
+			}
 		});
 
 		test("returns forms with limit and offset", async () => {
@@ -30,15 +33,20 @@ describe("Forms Actions", () => {
 
 			const result = await getFormsAction(1, 1);
 
-			expect(result.forms).toHaveLength(1);
-			expect(result.total).toBe(3);
-			expect(result.hasMore).toBe(true);
+			expect(result.success).toBe(true);
+			if (result.success) {
+				expect(result.data.forms).toHaveLength(1);
+				expect(result.data.total).toBe(3);
+				expect(result.data.hasMore).toBe(true);
+			}
 		});
 
-		test("throws error for invalid offset", async () => {
-			await expect(getFormsAction(10, -1)).rejects.toThrow(
-				"Invalid limit or offset"
-			);
+		test("returns error for invalid offset", async () => {
+			const result = await getFormsAction(10, -1);
+			expect(result.success).toBe(false);
+			if (!result.success) {
+				expect(result.error).toBe("Invalid limit or offset");
+			}
 		});
 	});
 
@@ -46,15 +54,20 @@ describe("Forms Actions", () => {
 		test("creates a new form", async () => {
 			const result = await createFormAction(TEST_FORM_DATA);
 
-			expect(result).toHaveProperty("id");
-			expect(result.title).toBe(TEST_FORM_DATA.title);
-			expect(result.fields).toEqual(TEST_FORM_DATA.fields);
+			expect(result.success).toBe(true);
+			if (result.success) {
+				expect(result.data).toHaveProperty("id");
+				expect(result.data.title).toBe(TEST_FORM_DATA.title);
+				expect(result.data.fields).toEqual(TEST_FORM_DATA.fields);
+			}
 		});
 
-		test("throws error if required fields are not provided", async () => {
-			await expect(createFormAction({} as FormData)).rejects.toThrow(
-				"Title and fields are required"
-			);
+		test("returns error if required fields are not provided", async () => {
+			const result = await createFormAction({} as FormData);
+			expect(result.success).toBe(false);
+			if (!result.success) {
+				expect(result.error).toBe("Title and fields are required");
+			}
 		});
 	});
 });

@@ -33,9 +33,12 @@ describe("Submissions Actions", () => {
 
 			const result = await getSubmissionsAction(form.id, 1, 0);
 
-			expect(result.submissions).toHaveLength(1);
-			expect(result.total).toBe(1);
-			expect(result.hasMore).toBe(false);
+			expect(result.success).toBe(true);
+			if (result.success) {
+				expect(result.data.submissions).toHaveLength(1);
+				expect(result.data.total).toBe(1);
+				expect(result.data.hasMore).toBe(false);
+			}
 		});
 
 		test("returns submissions for formId with limit and offset", async () => {
@@ -45,17 +48,23 @@ describe("Submissions Actions", () => {
 
 			const result = await getSubmissionsAction(form.id, 1, 0);
 
-			expect(result.submissions).toHaveLength(1);
-			expect(result.total).toBe(2);
-			expect(result.hasMore).toBe(true);
+			expect(result.success).toBe(true);
+			if (result.success) {
+				expect(result.data.submissions).toHaveLength(1);
+				expect(result.data.total).toBe(2);
+				expect(result.data.hasMore).toBe(true);
+			}
 		});
 
 		test("returns empty list for non-existent formId", async () => {
 			const result = await getSubmissionsAction(NON_EXISTENT_ID);
 
-			expect(result.submissions).toEqual([]);
-			expect(result.total).toBe(0);
-			expect(result.hasMore).toBe(false);
+			expect(result.success).toBe(true);
+			if (result.success) {
+				expect(result.data.submissions).toEqual([]);
+				expect(result.data.total).toBe(0);
+				expect(result.data.hasMore).toBe(false);
+			}
 		});
 
 		test("returns correct hasMore=false on last page of pagination", async () => {
@@ -66,15 +75,20 @@ describe("Submissions Actions", () => {
 
 			const result = await getSubmissionsAction(form.id, 2, 2);
 
-			expect(result.submissions).toHaveLength(1);
-			expect(result.total).toBe(3);
-			expect(result.hasMore).toBe(false);
+			expect(result.success).toBe(true);
+			if (result.success) {
+				expect(result.data.submissions).toHaveLength(1);
+				expect(result.data.total).toBe(3);
+				expect(result.data.hasMore).toBe(false);
+			}
 		});
 
-		test("throws error if formId is not provided", async () => {
-			await expect(getSubmissionsAction("")).rejects.toThrow(
-				"Form ID is required"
-			);
+		test("returns error if formId is not provided", async () => {
+			const result = await getSubmissionsAction("");
+			expect(result.success).toBe(false);
+			if (!result.success) {
+				expect(result.error).toBe("Form ID is required");
+			}
 		});
 	});
 
@@ -87,30 +101,42 @@ describe("Submissions Actions", () => {
 				TEST_SUBMISSION_DATA
 			);
 
-			expect(result.formId).toBe(form.id);
-			expect(result.data).toEqual(TEST_SUBMISSION_DATA);
-			expect(result.id).toBeDefined();
+			expect(result.success).toBe(true);
+			if (result.success) {
+				expect(result.data.formId).toBe(form.id);
+				expect(result.data.data).toEqual(TEST_SUBMISSION_DATA);
+				expect(result.data.id).toBeDefined();
+			}
 		});
 
-		test("throws error if form does not exist", async () => {
+		test("returns error if form does not exist", async () => {
 			jest.spyOn(console, "error").mockImplementationOnce(() => {});
 
-			await expect(
-				createSubmissionAction(NON_EXISTENT_ID, TEST_SUBMISSION_DATA)
-			).rejects.toThrow("Related form not found");
+			const result = await createSubmissionAction(
+				NON_EXISTENT_ID,
+				TEST_SUBMISSION_DATA
+			);
+			expect(result.success).toBe(false);
+			if (!result.success) {
+				expect(result.error).toBe("Related form not found");
+			}
 		});
 
-		test("throws error if formId is not provided", async () => {
-			await expect(
-				createSubmissionAction("", TEST_SUBMISSION_DATA)
-			).rejects.toThrow("Form ID and data are required");
+		test("returns error if formId is not provided", async () => {
+			const result = await createSubmissionAction("", TEST_SUBMISSION_DATA);
+			expect(result.success).toBe(false);
+			if (!result.success) {
+				expect(result.error).toBe("Form ID and data are required");
+			}
 		});
 
-		test("throws error if data is not provided", async () => {
+		test("returns error if data is not provided", async () => {
 			const form = await createTestForm();
-			await expect(
-				createSubmissionAction(form.id, null as any)
-			).rejects.toThrow("Form ID and data are required");
+			const result = await createSubmissionAction(form.id, null as any);
+			expect(result.success).toBe(false);
+			if (!result.success) {
+				expect(result.error).toBe("Form ID and data are required");
+			}
 		});
 	});
 });
