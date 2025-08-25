@@ -1,41 +1,10 @@
 "use server";
 
-import {
-	createForm,
-	getForm,
-	getForms,
-	updateForm,
-	deleteForm,
-	createSubmission,
-	getSubmissions,
-} from "./db-operations";
-import type {
-	FormData,
-	PartialFormData,
-	FormsListResult,
-	SubmissionsListResult,
-	SubmissionData,
-} from "@/types/db";
+import { prisma } from "./db";
+import type { FormData, PartialFormData, SubmissionData } from "@/types/db";
 import type { ResponseData } from "@/types/actions";
-import { Prisma, Form, Submission } from "@prisma/client";
+import { Prisma, type Form, type Submission } from "@prisma/client";
 import { successResponse, errorResponse } from "./utils";
-
-export async function getFormsAction(
-	limit = 10,
-	offset = 0
-): Promise<ResponseData<FormsListResult>> {
-	if (limit < 1 || offset < 0) {
-		return errorResponse("Invalid limit or offset");
-	}
-
-	try {
-		const result = await getForms(limit, offset);
-		return successResponse(result);
-	} catch (error) {
-		console.error("Forms action GET error:", error);
-		return errorResponse("Internal server error");
-	}
-}
 
 export async function createFormAction(
 	data: FormData
@@ -45,36 +14,10 @@ export async function createFormAction(
 	}
 
 	try {
-		const result = await createForm(data);
+		const result = await prisma.form.create({ data });
 		return successResponse(result);
 	} catch (error) {
 		console.error("Forms action POST error:", error);
-
-		if (error instanceof Prisma.PrismaClientKnownRequestError) {
-			return errorResponse("Database error");
-		}
-
-		return errorResponse("Internal server error");
-	}
-}
-
-export async function getFormAction(
-	id: string
-): Promise<ResponseData<Form & { submissions: Submission[] }>> {
-	if (!id) {
-		return errorResponse("Form ID is required");
-	}
-
-	try {
-		const result = await getForm(id);
-
-		if (!result) {
-			return errorResponse("Form not found");
-		}
-
-		return successResponse(result);
-	} catch (error) {
-		console.error("Form action GET error:", error);
 
 		if (error instanceof Prisma.PrismaClientKnownRequestError) {
 			return errorResponse("Database error");
@@ -92,12 +35,12 @@ export async function updateFormAction(
 		return errorResponse("Form ID is required");
 	}
 
-	if (data.title && data.title.length < 1) {
+	if (data.title !== undefined && data.title.length < 1) {
 		return errorResponse("Title must be at least 1 character");
 	}
 
 	try {
-		const result = await updateForm(id, data);
+		const result = await prisma.form.update({ where: { id }, data });
 		return successResponse(result);
 	} catch (error) {
 		console.error("Form action PUT error:", error);
@@ -123,7 +66,7 @@ export async function deleteFormAction(
 	}
 
 	try {
-		const result = await deleteForm(id);
+		const result = await prisma.form.delete({ where: { id } });
 		return successResponse(result);
 	} catch (error) {
 		console.error("Form action DELETE error:", error);
@@ -141,28 +84,6 @@ export async function deleteFormAction(
 	}
 }
 
-export async function getSubmissionsAction(
-	formId: string,
-	limit = 50,
-	offset = 0
-): Promise<ResponseData<SubmissionsListResult>> {
-	if (!formId) {
-		return errorResponse("Form ID is required");
-	}
-
-	if (limit < 1 || offset < 0) {
-		return errorResponse("Invalid limit or offset");
-	}
-
-	try {
-		const result = await getSubmissions(formId, limit, offset);
-		return successResponse(result);
-	} catch (error) {
-		console.error("Submissions action GET error:", error);
-		return errorResponse("Internal server error");
-	}
-}
-
 export async function createSubmissionAction(
 	formId: string,
 	data: SubmissionData
@@ -172,7 +93,7 @@ export async function createSubmissionAction(
 	}
 
 	try {
-		const result = await createSubmission(formId, data);
+		const result = await prisma.submission.create({ data: { formId, data } });
 		return successResponse(result);
 	} catch (error) {
 		console.error("Submissions action POST error:", error);

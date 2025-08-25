@@ -6,7 +6,7 @@ import {
 	Trash2,
 	Copy,
 } from "lucide-react";
-import { FormsListItem } from "@/types/db";
+import type { FormsListItem } from "@/types/db";
 import { formatDate } from "@/lib/utils";
 import { deleteFormAction } from "@/lib/actions";
 

@@ -1,4 +1,4 @@
-import { getForms } from "@/lib/db-operations";
+import { getForms } from "@/lib/db";
 import { CreateFormButton } from "@/components/create-form-button";
 import { Dashboard } from "@/components/dashboard";
 
