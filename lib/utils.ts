@@ -3,15 +3,23 @@ import { twMerge } from "tailwind-merge";
 import { ResponseData } from "@/types/api";
 
 export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
+	return twMerge(clsx(inputs));
 }
 
 export const successResponse = <T>(data: T): ResponseData<T> => ({
-  success: true,
-  data,
+	success: true,
+	data,
 });
 
 export const errorResponse = (error: string): ResponseData<never> => ({
-  success: false,
-  error,
+	success: false,
+	error,
 });
+
+export const formatDate = (date: Date) => {
+	return new Intl.DateTimeFormat("en-US", {
+		month: "short",
+		day: "numeric",
+		year: "numeric",
+	}).format(new Date(date));
+};
