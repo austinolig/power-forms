@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import { FormsListItem } from "@/types/db";
 import { formatDate } from "@/lib/utils";
+import { deleteFormAction } from "@/lib/actions";
 
 interface FormCardProps {
 	form: FormsListItem;
@@ -29,16 +30,9 @@ export function FormCard({ form }: FormCardProps) {
 		if (!confirm("Are you sure you want to delete this form?")) return;
 
 		try {
-			const response = await fetch(`/api/forms/${form.id}`, {
-				method: "DELETE",
-			});
-
-			if (response.ok) {
-				// Refresh the page to update the forms list
-				window.location.reload();
-			} else {
-				alert("Failed to delete form");
-			}
+			await deleteFormAction(form.id);
+			// Refresh the page to update the forms list
+			window.location.reload();
 		} catch (err) {
 			alert("Failed to delete form");
 			console.error("Delete error:", err);
