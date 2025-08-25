@@ -11,7 +11,7 @@
 
 ## Code Style
 
-- **User Interface**: Use Tailwind CSS and focus on beautiful designs with best principles
+- **User Interface**: Use shadcn/ui components and Tailwind CSS to focus on making beautiful designs with best principles
 - **User Experience**: Use best practices with intuitive user flows
 - **Type Safety**: Use TypeScript with strict typing, explicit return types for functions
 - **Imports**: Use `@/` alias for project root, group external then internal imports
@@ -20,22 +20,13 @@
 - **Database**: Use Prisma with typed operations, handle `PrismaClientKnownRequestError`
 - **API**: Next.js App Router, typed request/response with `NextRequest`/`NextResponse`
 - **Types**: Define in `/types/` directory, use union types for responses
+- **Issue Research**: Use `gh` CLI to read the specified issue details and reference `@PowerForms-MVP-Requirements.md` for full project context and requirements
+- **Branch Creation**: Create appropriately named branch based on issue directive (e.g., `feature/issue-123-form-builder` or `fix/issue-456-validation-bug`)
+- **Development**: Implement features according to issue requirements and `@PowerForms-MVP-Requirements.md` specifications
+- **Pull Requests**: Create PR that closes the original issue with `Closes #issue-number`, includes description of implemented features based on actual code changes, and references relevant sections from requirements document if applicable
 
 ## Architecture
 
 - Next.js 15 with App Router, React 19, Prisma ORM, PostgreSQL
 - API routes in `app/api/`, database operations in `lib/db-operations.ts`
 - Use existing utility functions from `@/lib/utils`
-
-## GitHub Issue Workflow
-
-When working with GitHub issues:
-
-1. **Issue Research**: Use `gh` CLI to read the specified issue details
-2. **Requirements Review**: Reference `@PowerForms-MVP-Requirements.md` for full project context and requirements
-3. **Branch Creation**: Create appropriately named branch based on issue directive (e.g., `feature/issue-123-form-builder` or `fix/issue-456-validation-bug`)
-4. **Development**: Implement features according to issue requirements and MVP specifications
-5. **Pull Request**: Create PR that:
-   - Closes the original issue with `Closes #issue-number`
-   - Includes description of implemented features based on actual code changes
-   - References relevant sections from requirements document if applicable

@@ -14,9 +14,9 @@ CREATE TABLE "public"."forms" (
 -- CreateTable
 CREATE TABLE "public"."submissions" (
     "id" TEXT NOT NULL,
-    "form_id" TEXT NOT NULL,
-    "data" JSONB NOT NULL,
+    "responses" JSONB NOT NULL,
     "submitted_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "form_id" TEXT NOT NULL,
 
     CONSTRAINT "submissions_pkey" PRIMARY KEY ("id")
 );
