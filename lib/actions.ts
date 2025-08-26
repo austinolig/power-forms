@@ -5,19 +5,7 @@ import type { FormData, PartialFormData, SubmissionData } from "@/types/db";
 import type { ResponseData } from "@/types/actions";
 import { Prisma, type Form, type Submission } from "@prisma/client";
 import { successResponse, errorResponse } from "./utils";
-
-// revalidatePath is a Next.js runtime helper; in tests it may not be available.
-let revalidatePath: (path: string) => void = () => {};
-try {
-	// dynamic require to avoid importing Next internals in Jest
-	try {
-		revalidatePath = require("next/cache").revalidatePath;
-	} catch (e) {
-		revalidatePath = () => {};
-	}
-} catch (e) {
-	// noop in test environment
-}
+import { revalidatePath } from "next/cache";
 
 export async function createFormAction(
 	data: FormData
