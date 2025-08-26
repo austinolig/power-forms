@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { FormsListResult } from "@/types/db";
+import type { FormsListResult } from "@/types/db";
 import { Plus } from "lucide-react";
 import { SearchBar } from "./search-bar";
 import { FormCard } from "./form-card";

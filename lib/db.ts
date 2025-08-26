@@ -1,9 +1,109 @@
-import { PrismaClient } from "@prisma/client";
+import { Prisma, PrismaClient } from "@prisma/client";
+import type {
+	FormsListResult,
+	FormWithSubmissions,
+	SubmissionsListResult,
+} from "@/types/db";
+import type { ResponseData } from "@/types/actions";
+import { errorResponse, successResponse } from "@/lib/utils";
 
 const globalForPrisma = globalThis as unknown as {
-  prisma: PrismaClient | undefined;
+	prisma: PrismaClient | undefined;
 };
 
 export const prisma = globalForPrisma.prisma ?? new PrismaClient();
 
 if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
+
+export async function getForm(
+	id: string
+): Promise<ResponseData<FormWithSubmissions>> {
+	try {
+		const form = await prisma.form.findUnique({
+			where: { id },
+			include: {
+				submissions: {
+					orderBy: { submittedAt: "desc" },
+					take: 10,
+				},
+			},
+		});
+
+		if (!form) {
+			throw new Error("Form not found");
+		}
+
+		return successResponse(form);
+	} catch (error) {
+		if (error instanceof Prisma.PrismaClientKnownRequestError) {
+			return errorResponse("Database error");
+		}
+
+		if (error instanceof Error) {
+			return errorResponse(error.message);
+		}
+
+		return errorResponse("Internal server error");
+	}
+}
+
+export async function getForms(
+	limit = 10,
+	offset = 0
+): Promise<ResponseData<FormsListResult>> {
+	try {
+		const [forms, total] = await Promise.all([
+			prisma.form.findMany({
+				orderBy: { createdAt: "desc" },
+				take: limit,
+				skip: offset,
+				select: {
+					id: true,
+					title: true,
+					description: true,
+					createdAt: true,
+					updatedAt: true,
+					_count: { select: { submissions: true } },
+				},
+			}),
+			prisma.form.count(),
+		]);
+		return successResponse({ forms, total, hasMore: offset + limit < total });
+	} catch (error) {
+		if (error instanceof Prisma.PrismaClientKnownRequestError) {
+			return errorResponse("Database error");
+		}
+
+		return errorResponse("Internal server error");
+	}
+}
+
+export async function getSubmissions(
+	formId: string,
+	limit = 50,
+	offset = 0
+): Promise<ResponseData<SubmissionsListResult>> {
+	try {
+		const [submissions, total] = await Promise.all([
+			prisma.submission.findMany({
+				where: { formId },
+				orderBy: { submittedAt: "desc" },
+				take: limit,
+				skip: offset,
+			}),
+			prisma.submission.count({ where: { formId } }),
+		]);
+
+		return successResponse({
+			submissions,
+			total,
+			hasMore: offset + limit < total,
+		});
+	} catch (error) {
+		if (error instanceof Prisma.PrismaClientKnownRequestError) {
+			return errorResponse("Database error");
+		}
+
+		return errorResponse("Internal server error");
+	}
+}

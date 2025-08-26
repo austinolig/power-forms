@@ -28,5 +28,5 @@
 ## Architecture
 
 - Next.js 15 with App Router, React 19, Prisma ORM, PostgreSQL
-- API routes in `app/api/`, database operations in `lib/db-operations.ts`
+- API routes in `app/api/`, database operations in `lib/db.ts`
 - Use existing utility functions from `@/lib/utils`
