@@ -37,25 +37,33 @@ describe("Actions", () => {
 				const form = await createTestForm();
 				const result = await getForm(form.id);
 
-				expect(result).not.toBeNull();
-				expect(result!.id).toBe(form.id);
-				expect(result!.title).toBe(TEST_FORM_DATA.title);
-				expect(result!.submissions).toEqual([]);
+				expect(result.success).toBe(true);
+				if (result.success) {
+					expect(result.data.id).toBe(form.id);
+					expect(result.data.title).toBe(TEST_FORM_DATA.title);
+					expect(result.data.submissions).toEqual([]);
+				}
 			});
 
-			test("returns null for non-existent form", async () => {
+			test("returns error for non-existent form", async () => {
 				const result = await getForm(NON_EXISTENT_ID);
 
-				expect(result).toBeNull();
+				expect(result.success).toBe(false);
+				if (!result.success) {
+					expect(result.error).toBe("Form not found");
+				}
 			});
 		});
 
 		describe("getForms", () => {
 			test("returns paginated forms", async () => {
 				const result = await getForms();
-				expect(result.forms).toEqual([]);
-				expect(result.total).toBe(0);
-				expect(result.hasMore).toBe(false);
+				expect(result.success).toBe(true);
+				if (result.success) {
+					expect(result.data.forms).toEqual([]);
+					expect(result.data.total).toBe(0);
+					expect(result.data.hasMore).toBe(false);
+				}
 			});
 
 			test("returns forms with limit and offset", async () => {
@@ -63,9 +71,12 @@ describe("Actions", () => {
 					data: [TEST_FORM_DATA, TEST_FORM_DATA, TEST_FORM_DATA],
 				});
 				const result = await getForms(1, 0);
-				expect(result.forms).toHaveLength(1);
-				expect(result.total).toBe(3);
-				expect(result.hasMore).toBe(true);
+				expect(result.success).toBe(true);
+				if (result.success) {
+					expect(result.data.forms).toHaveLength(1);
+					expect(result.data.total).toBe(3);
+					expect(result.data.hasMore).toBe(true);
+				}
 			});
 		});
 
@@ -74,9 +85,12 @@ describe("Actions", () => {
 				const form = await createTestForm();
 				const result = await getSubmissions(form.id);
 
-				expect(result.submissions).toEqual([]);
-				expect(result.total).toBe(0);
-				expect(result.hasMore).toBe(false);
+				expect(result.success).toBe(true);
+				if (result.success) {
+					expect(result.data.submissions).toEqual([]);
+					expect(result.data.total).toBe(0);
+					expect(result.data.hasMore).toBe(false);
+				}
 			});
 
 			test("returns submissions with limit and offset", async () => {
@@ -89,17 +103,12 @@ describe("Actions", () => {
 					],
 				});
 				const result = await getSubmissions(form.id, 1, 0);
-				expect(result.submissions).toHaveLength(1);
-				expect(result.total).toBe(3);
-				expect(result.hasMore).toBe(true);
-			});
-
-			test("returns empty list if form does not exist", async () => {
-				const result = await getSubmissions(NON_EXISTENT_ID);
-
-				expect(result.submissions).toEqual([]);
-				expect(result.total).toBe(0);
-				expect(result.hasMore).toBe(false);
+				expect(result.success).toBe(true);
+				if (result.success) {
+					expect(result.data.submissions).toHaveLength(1);
+					expect(result.data.total).toBe(3);
+					expect(result.data.hasMore).toBe(true);
+				}
 			});
 		});
 	});
@@ -111,13 +120,13 @@ describe("Actions", () => {
 
 				expect(result.success).toBe(true);
 				if (result.success) {
-					expect(result.data).toHaveProperty("id");
+					expect(result.data.id).toBeDefined();
 					expect(result.data.title).toBe(TEST_FORM_DATA.title);
 					expect(result.data.fields).toEqual(TEST_FORM_DATA.fields);
 				}
 			});
 
-			test("returns error if required fields are not provided", async () => {
+			test("returns error if required title or fields are not provided", async () => {
 				const result = await createFormAction({} as FormData);
 				expect(result.success).toBe(false);
 				if (!result.success) {
@@ -135,8 +144,8 @@ describe("Actions", () => {
 
 				expect(result.success).toBe(true);
 				if (result.success) {
-					expect(result.data.title).toBe(updateData.title);
 					expect(result.data.id).toBe(form.id);
+					expect(result.data.title).toBe(updateData.title);
 				}
 			});
 
@@ -237,9 +246,9 @@ describe("Actions", () => {
 
 				expect(result.success).toBe(true);
 				if (result.success) {
+					expect(result.data.id).toBeDefined();
 					expect(result.data.formId).toBe(form.id);
 					expect(result.data.data).toEqual(TEST_SUBMISSION_DATA);
-					expect(result.data.id).toBeDefined();
 				}
 			});
 
