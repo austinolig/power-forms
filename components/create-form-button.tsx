@@ -1,10 +1,23 @@
 "use client";
 
 import { Plus } from "lucide-react";
+import { createFormAction } from "@/lib/actions";
 
 export function CreateFormButton() {
-	const handleCreateNew = () => {
+	const handleCreateNew = async () => {
 		console.log("Create new form");
+
+		const response = await createFormAction({
+			title: "New Form",
+			description: "",
+			fields: [],
+		});
+
+		if (response.success) {
+			alert(`Form created with ID: ${response.data.id}`);
+		} else {
+			alert(`Error creating form: ${response.error}`);
+		}
 	};
 
 	return (

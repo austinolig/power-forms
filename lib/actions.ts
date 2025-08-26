@@ -1,10 +1,11 @@
 "use server";
 
-import { prisma } from "./db";
+import { createForm, updateForm, deleteForm, createSubmission } from "./db";
 import type { FormData, PartialFormData, SubmissionData } from "@/types/db";
 import type { ResponseData } from "@/types/actions";
 import { Prisma, type Form, type Submission } from "@prisma/client";
 import { successResponse, errorResponse } from "./utils";
+import { revalidatePath } from "next/cache";
 
 export async function createFormAction(
 	data: FormData
@@ -14,7 +15,8 @@ export async function createFormAction(
 	}
 
 	try {
-		const result = await prisma.form.create({ data });
+		const result = await createForm(data);
+		revalidatePath("/");
 		return successResponse(result);
 	} catch (error) {
 		console.error("Forms action POST error:", error);
@@ -40,7 +42,8 @@ export async function updateFormAction(
 	}
 
 	try {
-		const result = await prisma.form.update({ where: { id }, data });
+		const result = await updateForm(id, data);
+		revalidatePath("/");
 		return successResponse(result);
 	} catch (error) {
 		console.error("Form action PUT error:", error);
@@ -66,7 +69,8 @@ export async function deleteFormAction(
 	}
 
 	try {
-		const result = await prisma.form.delete({ where: { id } });
+		const result = await deleteForm(id);
+		revalidatePath("/");
 		return successResponse(result);
 	} catch (error) {
 		console.error("Form action DELETE error:", error);
@@ -93,7 +97,8 @@ export async function createSubmissionAction(
 	}
 
 	try {
-		const result = await prisma.submission.create({ data: { formId, data } });
+		const result = await createSubmission(formId, data);
+		revalidatePath("/");
 		return successResponse(result);
 	} catch (error) {
 		console.error("Submissions action POST error:", error);
