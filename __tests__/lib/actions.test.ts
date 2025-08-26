@@ -4,7 +4,12 @@ import {
 	deleteFormAction,
 	createSubmissionAction,
 } from "@/lib/actions";
-import { prisma, getForm, getForms, getSubmissions } from "@/lib/db";
+import {
+	getFormWithSubmissions,
+	getFormsWithPagination,
+	getSubmissionsWithPagination,
+} from "@/lib/db";
+import { prisma } from "@/lib/db";
 import type { FormData, SubmissionData } from "@/types/db";
 
 const TEST_FORM_DATA: FormData = { title: "form title", fields: [] };
@@ -35,62 +40,56 @@ describe("Actions", () => {
 		describe("getForm", () => {
 			test("returns form with submissions", async () => {
 				const form = await createTestForm();
-				const result = await getForm(form.id);
+				const formWithSubmissions = await getFormWithSubmissions(form.id);
 
-				expect(result.success).toBe(true);
-				if (result.success) {
-					expect(result.data.id).toBe(form.id);
-					expect(result.data.title).toBe(TEST_FORM_DATA.title);
-					expect(result.data.submissions).toEqual([]);
-				}
+				expect(formWithSubmissions).toBeDefined();
+				expect(formWithSubmissions?.id).toBe(form.id);
+				expect(formWithSubmissions?.title).toBe(TEST_FORM_DATA.title);
+				expect(formWithSubmissions?.submissions).toEqual([]);
 			});
 
 			test("returns error for non-existent form", async () => {
-				const result = await getForm(NON_EXISTENT_ID);
+				const formWithSubmissions =
+					await getFormWithSubmissions(NON_EXISTENT_ID);
 
-				expect(result.success).toBe(false);
-				if (!result.success) {
-					expect(result.error).toBe("Form not found");
-				}
+				expect(formWithSubmissions).toBeNull();
 			});
 		});
 
 		describe("getForms", () => {
 			test("returns paginated forms", async () => {
-				const result = await getForms();
-				expect(result.success).toBe(true);
-				if (result.success) {
-					expect(result.data.forms).toEqual([]);
-					expect(result.data.total).toBe(0);
-					expect(result.data.hasMore).toBe(false);
-				}
+				const formsWithPagination = await getFormsWithPagination();
+
+				expect(formsWithPagination).toBeDefined();
+				expect(formsWithPagination.forms).toEqual([]);
+				expect(formsWithPagination.total).toBe(0);
+				expect(formsWithPagination.hasMore).toBe(false);
 			});
 
 			test("returns forms with limit and offset", async () => {
 				await prisma.form.createMany({
 					data: [TEST_FORM_DATA, TEST_FORM_DATA, TEST_FORM_DATA],
 				});
-				const result = await getForms(1, 0);
-				expect(result.success).toBe(true);
-				if (result.success) {
-					expect(result.data.forms).toHaveLength(1);
-					expect(result.data.total).toBe(3);
-					expect(result.data.hasMore).toBe(true);
-				}
+				const formsWithPagination = await getFormsWithPagination(1, 0);
+
+				expect(formsWithPagination).toBeDefined();
+				expect(formsWithPagination.forms).toHaveLength(1);
+				expect(formsWithPagination.total).toBe(3);
+				expect(formsWithPagination.hasMore).toBe(true);
 			});
 		});
 
 		describe("getSubmissions", () => {
 			test("returns paginated submissions", async () => {
 				const form = await createTestForm();
-				const result = await getSubmissions(form.id);
+				const submissionsWithPagination = await getSubmissionsWithPagination(
+					form.id
+				);
 
-				expect(result.success).toBe(true);
-				if (result.success) {
-					expect(result.data.submissions).toEqual([]);
-					expect(result.data.total).toBe(0);
-					expect(result.data.hasMore).toBe(false);
-				}
+				expect(submissionsWithPagination).toBeDefined();
+				expect(submissionsWithPagination.submissions).toEqual([]);
+				expect(submissionsWithPagination.total).toBe(0);
+				expect(submissionsWithPagination.hasMore).toBe(false);
 			});
 
 			test("returns submissions with limit and offset", async () => {
@@ -102,13 +101,16 @@ describe("Actions", () => {
 						{ formId: form.id, data: TEST_SUBMISSION_DATA },
 					],
 				});
-				const result = await getSubmissions(form.id, 1, 0);
-				expect(result.success).toBe(true);
-				if (result.success) {
-					expect(result.data.submissions).toHaveLength(1);
-					expect(result.data.total).toBe(3);
-					expect(result.data.hasMore).toBe(true);
-				}
+				const submissionsWithPagination = await getSubmissionsWithPagination(
+					form.id,
+					1,
+					0
+				);
+
+				expect(submissionsWithPagination).toBeDefined();
+				expect(submissionsWithPagination.submissions).toHaveLength(1);
+				expect(submissionsWithPagination.total).toBe(3);
+				expect(submissionsWithPagination.hasMore).toBe(true);
 			});
 		});
 	});
