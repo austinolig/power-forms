@@ -2,7 +2,7 @@ import { getFormsWithPagination } from "@/lib/db";
 import { CreateFormButton } from "@/components/create-form-button";
 import { Dashboard } from "@/components/dashboard";
 
-export default async function Home() {
+export default async function HomePage() {
 	const forms = await getFormsWithPagination();
 
 	return (
