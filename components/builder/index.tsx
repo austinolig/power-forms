@@ -14,7 +14,7 @@ function EditorField({ field }: { field: Field }) {
 			<div className="py-4 flex flex-col gap-2">
 				<label htmlFor={field.id}>{field.label}</label>
 				<input
-					className="w-full border rounded bg-white p-2"
+					className="w-full border rounded-xl bg-white p-2"
 					type="text"
 					name={field.id}
 				/>
@@ -94,6 +94,10 @@ function EditorField({ field }: { field: Field }) {
 export function Builder() {
 	const [fields, setFields] = useState<Field[]>([]);
 
+	const handleRemoveField = (id: string) => {
+		setFields((prevFields) => prevFields.filter((field) => field.id !== id));
+	};
+
 	const handleAddField = (type: string) => {
 		const newField: Field = {
 			id: crypto.randomUUID(),
@@ -112,19 +116,19 @@ export function Builder() {
 					</p>
 					<div className="flex gap-4">
 						<button
-							className="p-4 border rounded bg-slate-50"
+							className="p-4 border rounded-xl bg-slate-50"
 							onClick={() => handleAddField("text")}
 						>
 							Add Text Field
 						</button>
 						<button
-							className="p-4 border rounded bg-slate-50"
+							className="p-4 border rounded-xl bg-slate-50"
 							onClick={() => handleAddField("checkbox")}
 						>
 							Add Checkbox
 						</button>
 						<button
-							className="p-4 border rounded bg-slate-50"
+							className="p-4 border rounded-xl bg-slate-50"
 							onClick={() => handleAddField("radio")}
 						>
 							Add Radio
@@ -134,25 +138,33 @@ export function Builder() {
 			)}
 			{fields.map((field) => (
 				<React.Fragment key={field.id}>
-					<div className="border p-4 rounded bg-slate-50">
-						<p className="text-muted-foreground">[{field.type}]</p>
+					<div className="border p-4 rounded-xl bg-slate-50">
+						<div className="flex justify-between items-center mb-4">
+							<p className="text-muted-foreground">[{field.type}]</p>
+							<button
+								className="px-2 border border-destructive bg-destructive/10 rounded-xl text-destructive"
+								onClick={() => handleRemoveField(field.id)}
+							>
+								Delete
+							</button>
+						</div>
 						<EditorField field={field} />
 					</div>
 					<div className="flex gap-4">
 						<button
-							className="p-4 border rounded bg-slate-50"
+							className="p-4 border rounded-xl bg-slate-50"
 							onClick={() => handleAddField("text")}
 						>
 							Add Text Field
 						</button>
 						<button
-							className="p-4 border rounded bg-slate-50"
+							className="p-4 border rounded-xl bg-slate-50"
 							onClick={() => handleAddField("checkbox")}
 						>
 							Add Checkbox
 						</button>
 						<button
-							className="p-4 border rounded bg-slate-50"
+							className="p-4 border rounded-xl bg-slate-50"
 							onClick={() => handleAddField("radio")}
 						>
 							Add Radio
