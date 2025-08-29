@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Badge } from "@/components/ui/badge";
 import { Toggle } from "@/components/ui/toggle";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -28,6 +29,8 @@ import {
 	Settings,
 	Zap,
 	Asterisk,
+	Edit3,
+	Eye,
 } from "lucide-react";
 
 type Field = {
@@ -496,45 +499,114 @@ export function Builder() {
 	);
 
 	return (
-		<div className="flex h-full">
-			{/* Editor Pane */}
-			<div className="w-1/2 h-full overflow-y-auto p-6 border-r bg-background">
-				<h2 className="text-lg font-semibold mb-6">Editor</h2>
-				<div className="space-y-6">
-					<FormHeader
+		<div className="h-full">
+			{/* Desktop: Split view */}
+			<div className="hidden md:flex h-full">
+				{/* Editor Pane */}
+				<div className="w-1/2 h-full overflow-y-auto p-6 border-r bg-background">
+					<h2 className="text-lg font-semibold mb-6">Editor</h2>
+					<div className="space-y-6">
+						<FormHeader
+							title={formTitle}
+							description={formDescription}
+							onTitleChange={setFormTitle}
+							onDescriptionChange={setFormDescription}
+						/>
+						<div className="flex justify-center">
+							<AddFieldDropdown insertIndex={fields.length > 0 ? -1 : 0} />
+						</div>
+						{fields.map((field, index) => (
+							<React.Fragment key={field.id}>
+								<div className="border p-6 rounded-lg bg-card">
+									<EditorField
+										field={field}
+										onUpdate={handleUpdateField}
+										onDelete={handleRemoveField}
+									/>
+								</div>
+								<div className="flex justify-center">
+									<AddFieldDropdown insertIndex={index} />
+								</div>
+							</React.Fragment>
+						))}
+					</div>
+				</div>
+
+				{/* Preview Pane */}
+				<div className="w-1/2 h-full overflow-y-auto p-6 bg-muted/20">
+					<h2 className="text-lg font-semibold mb-6">Preview</h2>
+					<PreviewPane
+						fields={fields}
 						title={formTitle}
 						description={formDescription}
-						onTitleChange={setFormTitle}
-						onDescriptionChange={setFormDescription}
 					/>
-					<div className="flex justify-center">
-						<AddFieldDropdown insertIndex={fields.length > 0 ? -1 : 0} />
-					</div>
-					{fields.map((field, index) => (
-						<React.Fragment key={field.id}>
-							<div className="border p-6 rounded-lg bg-card">
-								<EditorField
-									field={field}
-									onUpdate={handleUpdateField}
-									onDelete={handleRemoveField}
-								/>
-							</div>
-							<div className="flex justify-center">
-								<AddFieldDropdown insertIndex={index} />
-							</div>
-						</React.Fragment>
-					))}
 				</div>
 			</div>
 
-			{/* Preview Pane */}
-			<div className="w-1/2 h-full overflow-y-auto p-6 bg-muted/20">
-				<h2 className="text-lg font-semibold mb-6">Preview</h2>
-				<PreviewPane
-					fields={fields}
-					title={formTitle}
-					description={formDescription}
-				/>
+			{/* Tablet/Mobile: Tabbed view */}
+			<div className="md:hidden h-full overflow-y-auto">
+				<Tabs defaultValue="editor" className="h-full flex flex-col">
+					{/* Fixed tab navigation */}
+					<div className="select-none pointer-events-none fixed inset-0 p-6 h-full flex justify-center items-end z-50">
+						<TabsList className="select-auto pointer-events-auto shadow-xs">
+							<TabsTrigger value="editor" className="gap-2">
+								<Edit3 className="h-4 w-4" />
+								Editor
+							</TabsTrigger>
+							<TabsTrigger value="preview" className="gap-2">
+								<Eye className="h-4 w-4" />
+								Preview
+							</TabsTrigger>
+						</TabsList>
+					</div>
+
+					{/* Content with top padding to account for fixed tabs */}
+					<div className="pb-14">
+						<TabsContent value="editor" className="h-full m-0">
+							<div className="h-full overflow-y-auto p-6 bg-background">
+								<h2 className="text-lg font-semibold mb-6">Editor</h2>
+								<div className="space-y-6">
+									<FormHeader
+										title={formTitle}
+										description={formDescription}
+										onTitleChange={setFormTitle}
+										onDescriptionChange={setFormDescription}
+									/>
+									<div className="flex justify-center">
+										<AddFieldDropdown
+											insertIndex={fields.length > 0 ? -1 : 0}
+										/>
+									</div>
+									{fields.map((field, index) => (
+										<React.Fragment key={field.id}>
+											<div className="border p-6 rounded-lg bg-card">
+												<EditorField
+													field={field}
+													onUpdate={handleUpdateField}
+													onDelete={handleRemoveField}
+												/>
+											</div>
+											<div className="flex justify-center">
+												<AddFieldDropdown insertIndex={index} />
+											</div>
+										</React.Fragment>
+									))}
+								</div>
+							</div>
+						</TabsContent>
+
+						<TabsContent value="preview" className="h-full m-0">
+							<div className="h-full overflow-y-auto p-6 bg-muted/20">
+								<h2 className="text-lg font-semibold mb-6">Preview</h2>
+								<PreviewPane
+									fields={fields}
+									title={formTitle}
+									description={formDescription}
+								/>
+							</div>
+						</TabsContent>
+					</div>
+				</Tabs>
 			</div>
 		</div>
 	);
