@@ -1,38 +1,15 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { Builder } from "@/components/builder";
-import { EditorFormButtons } from "@/components/editor-form-buttons";
+import { BuilderLayout } from "@/components/builder/builder-layout";
+import { useResponsiveView } from "@/components/builder/use-responsive-view";
 
 export default function BuilderPage() {
-	const [currentView, setCurrentView] = useState<string>("editor");
-
-	useEffect(() => {
-		const handleResize = () => {
-			if (window.innerWidth >= 1024) {
-				setCurrentView("split");
-			} else {
-				setCurrentView("editor");
-			}
-		};
-
-		handleResize();
-		window.addEventListener("resize", handleResize);
-		return () => window.removeEventListener("resize", handleResize);
-	}, []);
+	const { currentView, setCurrentView } = useResponsiveView("editor");
 
 	return (
-		<div className="h-screen flex flex-col">
-			<div className="p-4 border-b flex justify-between items-center">
-				<h1 className="text-xl font-bold">Power Forms</h1>
-				<EditorFormButtons
-					activeView={currentView}
-					onViewChange={setCurrentView}
-				/>
-			</div>
-			<div className="flex-1 overflow-hidden">
-				<Builder currentView={currentView} />
-			</div>
-		</div>
+		<BuilderLayout activeView={currentView} onViewChange={setCurrentView}>
+			<Builder currentView={currentView} />
+		</BuilderLayout>
 	);
 }
