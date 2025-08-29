@@ -1,23 +1,18 @@
 "use client";
 
-import { ReactNode } from "react";
 import { BuilderHeader } from "./builder-header";
+import { useResponsiveView } from "@/components/builder/use-responsive-view";
+import { Builder } from "@/components/builder";
 
-interface BuilderLayoutProps {
-	children: ReactNode;
-	activeView: string;
-	onViewChange: (view: string) => void;
-}
+export function BuilderLayout() {
+	const { currentView, setCurrentView } = useResponsiveView("editor");
 
-export function BuilderLayout({
-	children,
-	activeView,
-	onViewChange,
-}: BuilderLayoutProps) {
 	return (
 		<div className="h-screen flex flex-col">
-			<BuilderHeader activeView={activeView} onViewChange={onViewChange} />
-			<div className="flex-1 overflow-hidden">{children}</div>
+			<BuilderHeader activeView={currentView} onViewChange={setCurrentView} />
+			<div className="flex-1 overflow-hidden">
+				<Builder currentView={currentView} />
+			</div>
 		</div>
 	);
 }

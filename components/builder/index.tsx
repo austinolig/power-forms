@@ -404,10 +404,9 @@ function PreviewPane({
 
 interface BuilderProps {
 	currentView?: string;
-	onViewChange?: (view: string) => void;
 }
 
-export function Builder({ currentView = "split", onViewChange }: BuilderProps) {
+export function Builder({ currentView = "split" }: BuilderProps) {
 	const [fields, setFields] = useState<Field[]>([]);
 	const [formTitle, setFormTitle] = useState<string>("Untitled Form");
 	const [formDescription, setFormDescription] = useState<string>("");
