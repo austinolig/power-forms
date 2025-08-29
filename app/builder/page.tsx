@@ -1,11 +1,5 @@
-import { Builder } from "@/components/builder";
+import { BuilderLayout } from "@/components/builder/builder-layout";
 
-export default async function BuilderPage() {
-	return (
-		<div className="p-4 m-4 mx-auto max-w-2xl">
-			<h1 className="mb-4">Builder Page</h1>
-
-			<Builder />
-		</div>
-	);
+export default function BuilderPage() {
+	return <BuilderLayout />;
 }
