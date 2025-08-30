@@ -6,7 +6,7 @@ import {
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Plus } from "lucide-react";
-import { getFieldIcon, getFieldTypeName } from "./field-utils";
+import { getFieldIcon, getFieldTypeName } from "../field-utils";
 
 interface AddFieldDropdownProps {
 	onAddField: (type: string, insertIndex?: number) => void;
