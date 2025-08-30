@@ -4,15 +4,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { FieldLabel } from "./field-label";
-
-export type Field = {
-	id: string;
-	type: string;
-	label: string;
-	description?: string;
-	options?: string[];
-	required?: boolean;
-};
+import { Field } from "../field-utils";
 
 interface PreviewFieldProps {
 	field: Field;
@@ -37,7 +29,7 @@ export function PreviewField({ field }: PreviewFieldProps) {
 	}
 }
 
-export function TextPreviewField({ field }: PreviewFieldProps) {
+function TextPreviewField({ field }: PreviewFieldProps) {
 	return (
 		<div className="space-y-2">
 			<FieldLabel
@@ -55,7 +47,7 @@ export function TextPreviewField({ field }: PreviewFieldProps) {
 	);
 }
 
-export function NumberPreviewField({ field }: PreviewFieldProps) {
+function NumberPreviewField({ field }: PreviewFieldProps) {
 	return (
 		<div className="space-y-2">
 			<FieldLabel
@@ -74,7 +66,7 @@ export function NumberPreviewField({ field }: PreviewFieldProps) {
 	);
 }
 
-export function EmailPreviewField({ field }: PreviewFieldProps) {
+function EmailPreviewField({ field }: PreviewFieldProps) {
 	return (
 		<div className="space-y-2">
 			<FieldLabel
@@ -93,7 +85,7 @@ export function EmailPreviewField({ field }: PreviewFieldProps) {
 	);
 }
 
-export function TextareaPreviewField({ field }: PreviewFieldProps) {
+function TextareaPreviewField({ field }: PreviewFieldProps) {
 	return (
 		<div className="space-y-2">
 			<FieldLabel
@@ -111,7 +103,7 @@ export function TextareaPreviewField({ field }: PreviewFieldProps) {
 	);
 }
 
-export function CheckboxPreviewField({ field }: PreviewFieldProps) {
+function CheckboxPreviewField({ field }: PreviewFieldProps) {
 	const options = field.options || [];
 	return (
 		<div className="space-y-2">
@@ -132,7 +124,7 @@ export function CheckboxPreviewField({ field }: PreviewFieldProps) {
 	);
 }
 
-export function RadioPreviewField({ field }: PreviewFieldProps) {
+function RadioPreviewField({ field }: PreviewFieldProps) {
 	const options = field.options || [];
 	return (
 		<div className="space-y-2">

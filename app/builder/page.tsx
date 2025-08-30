@@ -1,5 +1,5 @@
-import { BuilderLayout } from "@/components/builder/builder-layout";
+import { Builder } from "@/components/builder";
 
 export default function BuilderPage() {
-	return <BuilderLayout />;
+	return <Builder />;
 }

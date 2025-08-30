@@ -1,10 +1,11 @@
 "use client";
-
 import React from "react";
-import { FormHeader } from "./form-header";
 import { EditorField } from "./editor-field";
 import { AddFieldDropdown } from "./add-field-dropdown";
-import { Field } from "./preview-field";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Field } from "../field-utils";
 
 interface EditorPaneProps {
 	fields: Field[];
@@ -28,18 +29,27 @@ export function EditorPane({
 	onDeleteField,
 }: EditorPaneProps) {
 	return (
-		<div className="space-y-6">
-			<FormHeader
-				title={formTitle}
-				description={formDescription}
-				onTitleChange={onTitleChange}
-				onDescriptionChange={onDescriptionChange}
-			/>
-			<div className="flex justify-center">
-				<AddFieldDropdown
-					onAddField={onAddField}
-					insertIndex={fields.length > 0 ? -1 : 0}
+		<div className="max-w-2xl mx-auto space-y-6">
+			<h2 className="text-lg font-semibold">Editor</h2>
+			<div className="space-y-2">
+				<Label className="text-sm">Form Title</Label>
+				<Input
+					value={formTitle}
+					onChange={(e) => onTitleChange(e.target.value)}
+					placeholder="Enter form title..."
 				/>
+			</div>
+			<div className="space-y-2">
+				<Label className="text-sm">Form Description (Optional)</Label>
+				<Textarea
+					value={formDescription}
+					onChange={(e) => onDescriptionChange(e.target.value)}
+					placeholder="Enter form description..."
+					rows={3}
+				/>
+			</div>
+			<div className="flex justify-center">
+				<AddFieldDropdown onAddField={onAddField} insertIndex={-1} />
 			</div>
 			{fields.map((field, index) => (
 				<React.Fragment key={field.id}>

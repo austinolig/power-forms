@@ -7,9 +7,7 @@ export function useResponsiveView(defaultView: string = "editor") {
 
 	useEffect(() => {
 		const handleResize = () => {
-			if (window.innerWidth >= 1024) {
-				setCurrentView("split");
-			} else {
+			if (window.innerWidth < 1024 && currentView === "split") {
 				setCurrentView("editor");
 			}
 		};
@@ -17,7 +15,7 @@ export function useResponsiveView(defaultView: string = "editor") {
 		handleResize();
 		window.addEventListener("resize", handleResize);
 		return () => window.removeEventListener("resize", handleResize);
-	}, []);
+	}, [currentView]);
 
 	return {
 		currentView,
