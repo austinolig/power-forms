@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { PreviewField } from "./preview-field";
 import { Field } from "../field-utils";
@@ -20,8 +20,26 @@ export function PreviewPane({
 	title,
 	description,
 }: PreviewPaneProps) {
+	const formRef = useRef<HTMLFormElement>(null);
+
+	const validateForm = () => {
+		const form = formRef.current;
+		if (!form) return true;
+
+		// Check for validation errors in all fields (checkboxes, emails, etc.)
+		const errorElements = form.querySelectorAll(".text-red-500");
+		if (errorElements.length > 0) {
+			alert("Please fix the validation errors before submitting.");
+			return false;
+		}
+
+		return true;
+	};
+
 	const handleSubmit = async (formData: FormData) => {
 		if (!formId) return;
+
+		if (!validateForm()) return;
 
 		const data = formDataToJson(formData);
 		const result = await createSubmissionAction(formId, data);
@@ -50,7 +68,16 @@ export function PreviewPane({
 					)}
 				</div>
 			) : (
-				<form className="space-y-6" action={handleSubmit}>
+				<form
+					ref={formRef}
+					className="space-y-6"
+					action={handleSubmit}
+					onSubmit={(e) => {
+						if (!validateForm()) {
+							e.preventDefault();
+						}
+					}}
+				>
 					{fields.map((field) => (
 						<PreviewField key={field.id} field={field} />
 					))}
