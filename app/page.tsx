@@ -1,6 +1,8 @@
 import { getFormsWithPagination } from "@/lib/db";
-import { CreateFormButton } from "@/components/create-form-button";
 import { Dashboard } from "@/components/dashboard";
+import { Plus } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 export default async function HomePage() {
 	const forms = await getFormsWithPagination();
@@ -17,7 +19,12 @@ export default async function HomePage() {
 								Create and share your forms with ease.
 							</p>
 						</div>
-						<CreateFormButton />
+						<Link href="/forms/create">
+							<Button>
+								<Plus />
+								<span>Create Form</span>
+							</Button>
+						</Link>
 					</div>
 				</div>
 			</div>

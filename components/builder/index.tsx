@@ -1,18 +1,45 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { ViewTabs } from "./view-tabs";
 import { EditorPane } from "./editor-pane";
 import { PreviewPane } from "./preview-pane";
 import { Field, getDefaultLabel } from "./field-utils";
 import { useResponsiveView } from "./use-responsive-view";
-import { Button } from "@/components/ui/button";
+import { SaveDialog } from "./save-dialog";
+import Link from "next/link";
 
-export function Builder() {
+interface BuilderProps {
+	initialFormId?: string;
+	initialTitle?: string;
+	initialDescription?: string;
+	initialFields?: Field[];
+}
+
+export function Builder({
+	initialFormId,
+	initialTitle = "Untitled Form",
+	initialDescription = "",
+	initialFields = [],
+}: BuilderProps) {
 	const { currentView, setCurrentView } = useResponsiveView("editor");
-	const [formTitle, setFormTitle] = useState<string>("Untitled Form");
-	const [formDescription, setFormDescription] = useState<string>("");
-	const [fields, setFields] = useState<Field[]>([]);
+
+	const [formTitle, setFormTitle] = useState<string>(initialTitle);
+	const [formDescription, setFormDescription] =
+		useState<string>(initialDescription);
+	const [fields, setFields] = useState<Field[]>(initialFields);
+
+	useEffect(() => {
+		if (initialTitle !== "Untitled Form") {
+			setFormTitle(initialTitle);
+		}
+		if (initialDescription) {
+			setFormDescription(initialDescription);
+		}
+		if (initialFields.length > 0) {
+			setFields(initialFields);
+		}
+	}, [initialTitle, initialDescription, initialFields]);
 
 	const handleAddField = (type: string, insertIndex?: number) => {
 		const newField: Field = {
@@ -51,12 +78,17 @@ export function Builder() {
 	return (
 		<div className="h-dvh flex flex-col">
 			<div className="p-4 border-b flex justify-between items-center">
-				<h1 className="text-xl font-bold">PowerForms</h1>
+				<Link href={"/"}>
+					<h1 className="text-xl font-bold">PowerForms</h1>
+				</Link>
 				<div className="flex items-center gap-4">
 					<ViewTabs currentView={currentView} setCurrentView={setCurrentView} />
-					<Button size="sm" onClick={() => {}} title="Save" className="mr-2.5">
-						Save
-					</Button>
+					<SaveDialog
+						formId={initialFormId}
+						formTitle={formTitle}
+						formDescription={formDescription}
+						fields={fields}
+					/>
 				</div>
 			</div>
 			<div className="flex-1 overflow-hidden">

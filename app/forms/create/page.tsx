@@ -1,5 +1,5 @@
 import { Builder } from "@/components/builder";
 
-export default function BuilderPage() {
+export default function CreateFormPage() {
 	return <Builder />;
 }
