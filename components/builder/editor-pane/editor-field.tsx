@@ -7,7 +7,13 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Toggle } from "@/components/ui/toggle";
 import { Trash2, X, Settings, Zap, Asterisk } from "lucide-react";
-import { Field, getFieldIcon, getFieldTypeName } from "../field-utils";
+import {
+	Field,
+	getFieldIcon,
+	getFieldTypeName,
+	FieldSettings,
+} from "../field-utils";
+import { FieldSettingsDialog } from "./field-settings-dialog";
 
 interface EditorFieldProps {
 	field: Field;
@@ -39,6 +45,10 @@ export function EditorField({ field, onUpdate, onDelete }: EditorFieldProps) {
 		updateField({ options: newOptions });
 	};
 
+	const handleSaveSettings = (settings: FieldSettings) => {
+		updateField({ settings });
+	};
+
 	return (
 		<div className="space-y-6">
 			<div className="flex justify-between items-center pb-6 mb-6 border-b">
@@ -64,15 +74,16 @@ export function EditorField({ field, onUpdate, onDelete }: EditorFieldProps) {
 					>
 						<Zap className="h-4 w-4" />
 					</Button>
-					<Button
-						variant="ghost"
-						size="sm"
-						onClick={() => {}}
-						className="h-8 w-8 p-0"
-						title="Settings"
-					>
-						<Settings className="h-4 w-4" />
-					</Button>
+					<FieldSettingsDialog field={field} onSave={handleSaveSettings}>
+						<Button
+							variant="ghost"
+							size="sm"
+							className="h-8 w-8 p-0"
+							title="Settings"
+						>
+							<Settings className="h-4 w-4" />
+						</Button>
+					</FieldSettingsDialog>
 					<Button
 						variant="ghost"
 						size="sm"
