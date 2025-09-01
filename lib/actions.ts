@@ -115,3 +115,33 @@ export async function createSubmissionAction(
 		return errorResponse("Internal server error");
 	}
 }
+
+export async function submitFormAction(
+	webFormData: globalThis.FormData
+): Promise<void> {
+	const formId = webFormData.get("formId") as string;
+	if (!formId) {
+		throw new Error("Form ID is required");
+	}
+
+	const submissionData: Record<string, string | string[]> = {};
+	for (const [key, value] of webFormData.entries()) {
+		if (key === "formId") continue;
+		const stringValue = value as string;
+		if (submissionData[key]) {
+			// Multiple values for same key (checkboxes)
+			if (Array.isArray(submissionData[key])) {
+				submissionData[key].push(stringValue);
+			} else {
+				submissionData[key] = [submissionData[key] as string, stringValue];
+			}
+		} else {
+			submissionData[key] = stringValue;
+		}
+	}
+
+	const result = await createSubmissionAction(formId, submissionData);
+	if (!result.success) {
+		throw new Error(result.error);
+	}
+}
