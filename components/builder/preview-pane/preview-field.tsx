@@ -115,6 +115,7 @@ function CheckboxPreviewField({ field }: PreviewFieldProps) {
 							id={`${field.id}-${index}`}
 							name={field.id}
 							required={field.required}
+							value={option}
 						/>
 						<Label htmlFor={`${field.id}-${index}`}>{option}</Label>
 					</div>
@@ -133,7 +134,7 @@ function RadioPreviewField({ field }: PreviewFieldProps) {
 				{options.map((option, index) => (
 					<div key={index} className="flex items-center space-x-2">
 						<RadioGroupItem
-							value={`option${index + 1}`}
+							value={option}
 							id={`${field.id}-option${index + 1}`}
 						/>
 						<Label htmlFor={`${field.id}-option${index + 1}`}>{option}</Label>

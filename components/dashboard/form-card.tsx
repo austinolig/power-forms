@@ -6,6 +6,7 @@ import {
 	Trash2,
 	Copy,
 } from "lucide-react";
+import Link from "next/link";
 import type { FormsListItem } from "@/types/db";
 import { formatDate } from "@/lib/utils";
 import { deleteFormAction } from "@/lib/actions";
@@ -22,24 +23,12 @@ export function FormCard({ form }: FormCardProps) {
 		});
 	};
 
-	const handleEdit = () => {
-		console.log("Edit form:", form.id);
-	};
-
 	const handleDelete = async () => {
-		if (!confirm("Are you sure you want to delete this form?")) return;
-
-		try {
-			const result = await deleteFormAction(form.id);
-			if (result.success) {
-				// Refresh the page to update the forms list
-				window.location.reload();
-			} else {
-				alert(`Failed to delete form: ${result.error}`);
-			}
-		} catch (err) {
-			alert("Failed to delete form");
-			console.error("Delete error:", err);
+		const result = await deleteFormAction(form.id);
+		if (result.success) {
+			alert("Form deleted successfully");
+		} else {
+			alert(`Failed to delete form: ${result.error}`);
 		}
 	};
 
@@ -87,13 +76,13 @@ export function FormCard({ form }: FormCardProps) {
 					>
 						<Copy className="w-4 h-4" />
 					</button>
-					<button
-						onClick={handleEdit}
+					<Link
+						href={`/forms/${form.id}/edit`}
 						className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
 						title="Edit Form"
 					>
 						<Edit3 className="w-4 h-4" />
-					</button>
+					</Link>
 					<button
 						onClick={handleDelete}
 						className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
