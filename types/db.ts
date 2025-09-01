@@ -38,3 +38,7 @@ export type SubmissionData = Prisma.InputJsonValue;
 export type SubmissionsListResult = {
 	submissions: Submission[];
 } & PaginationMetadata;
+
+export type SubmissionWithForm = Submission & {
+	form: Form;
+};
