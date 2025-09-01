@@ -28,17 +28,18 @@ export const formDataToJson = (formData: FormData) => {
 	const data: Record<string, string[] | string> = {};
 
 	for (const [key, value] of formData.entries()) {
-		const parsedValue = value.toString();
-		if (parsedValue === "") continue;
+		const stringValue = value.toString();
 
-		if (key in data) {
+		if (stringValue === "") continue;
+
+		if (data[key]) {
 			if (Array.isArray(data[key])) {
-				data[key].push(parsedValue);
+				data[key].push(stringValue);
 			} else {
-				data[key] = [data[key], parsedValue];
+				data[key] = [data[key], stringValue];
 			}
 		} else {
-			data[key] = parsedValue;
+			data[key] = stringValue;
 		}
 	}
 

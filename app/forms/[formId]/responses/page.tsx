@@ -2,11 +2,13 @@ import { getSubmissionsWithPagination } from "@/lib/db";
 import { Submission } from "@prisma/client";
 import { notFound } from "next/navigation";
 
-interface ResponsesPageProps {
+interface FormResponsesPageProps {
 	params: Promise<{ formId: string }>;
 }
 
-export default async function ResponsesPage({ params }: ResponsesPageProps) {
+export default async function FormResponsesPage({
+	params,
+}: FormResponsesPageProps) {
 	const { formId } = await params;
 
 	const result = await getSubmissionsWithPagination(formId);

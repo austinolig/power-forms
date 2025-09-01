@@ -49,10 +49,16 @@ export function FormCard({ form }: FormCardProps) {
 							<Calendar className="w-4 h-4" />
 							<span>{formatDate(form.createdAt)}</span>
 						</div>
-						<div className="flex items-center gap-1">
-							<Users className="w-4 h-4" />
-							<span>{form._count.submissions} responses</span>
-						</div>
+						<Link
+							href={`/forms/${form.id}/responses`}
+							aria-label="View Responses"
+							className="hover:underline"
+						>
+							<div className="flex items-center gap-1">
+								<Users className="w-4 h-4" />
+								<span>{form._count.submissions} responses</span>
+							</div>
+						</Link>
 					</div>
 				</div>
 			</div>
