@@ -23,3 +23,24 @@ export const formatDate = (date: Date) => {
 		year: "numeric",
 	}).format(new Date(date));
 };
+
+export const formDataToJson = (formData: FormData) => {
+	const data: Record<string, string[] | string> = {};
+
+	for (const [key, value] of formData.entries()) {
+		const parsedValue = value.toString();
+		if (parsedValue === "") continue;
+
+		if (key in data) {
+			if (Array.isArray(data[key])) {
+				data[key].push(parsedValue);
+			} else {
+				data[key] = [data[key], parsedValue];
+			}
+		} else {
+			data[key] = parsedValue;
+		}
+	}
+
+	return data;
+};
