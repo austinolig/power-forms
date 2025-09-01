@@ -6,6 +6,7 @@ import type {
 	FormData,
 	PartialFormData,
 	SubmissionData,
+	SubmissionWithForm,
 } from "@/types/db";
 
 const globalForPrisma = globalThis as unknown as {
@@ -95,4 +96,13 @@ export async function createSubmission(
 	data: SubmissionData
 ): Promise<Submission> {
 	return await prisma.submission.create({ data: { formId, data } });
+}
+
+export async function getSubmissionWithForm(
+	submissionId: string
+): Promise<SubmissionWithForm | null> {
+	return await prisma.submission.findUnique({
+		where: { id: submissionId },
+		include: { form: true },
+	});
 }
