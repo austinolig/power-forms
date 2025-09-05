@@ -27,8 +27,10 @@ export function generateSchema(fields: Field[]) {
 						return value;
 					},
 					field.required
-						? z.string({ error: "This field is required" }).email()
-						: z.string().email().optional()
+						? z.email({
+								error: "This field is required",
+							})
+						: z.email().optional()
 				);
 				schema[field.id] = emailSchema;
 				break;
@@ -47,7 +49,7 @@ export function generateSchema(fields: Field[]) {
 			case "checkbox":
 				const checkboxSchema = z.preprocess(
 					(value: string[]) => {
-						if (value.length === 0) return undefined;
+						if (value?.length === 0) return undefined;
 						return value;
 					},
 					field.required

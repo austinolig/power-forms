@@ -9,7 +9,7 @@ import {
 import Link from "next/link";
 import type { FormsListItem } from "@/types/db";
 import { formatDate } from "@/lib/utils";
-import { deleteFormAction } from "@/lib/actions";
+import { deleteFormAction } from "@/lib/actions/form";
 
 interface FormCardProps {
 	form: FormsListItem;

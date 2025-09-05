@@ -1,10 +1,10 @@
 "use server";
 
-import { createForm, updateForm, deleteForm, createSubmission } from "./db";
-import type { FormData, PartialFormData, SubmissionData } from "@/types/db";
+import { createForm, updateForm, deleteForm } from "../db";
+import type { FormData, PartialFormData } from "@/types/db";
 import type { ResponseData } from "@/types/actions";
-import { Prisma, type Form, type Submission } from "@prisma/client";
-import { successResponse, errorResponse } from "./utils";
+import { Prisma, type Form } from "@prisma/client";
+import { successResponse, errorResponse } from "../utils";
 import { revalidatePath } from "next/cache";
 
 export async function createFormAction(
@@ -79,34 +79,6 @@ export async function deleteFormAction(
 			switch (error.code) {
 				case "P2025":
 					return errorResponse("Form not found");
-				default:
-					return errorResponse("Database error");
-			}
-		}
-
-		return errorResponse("Internal server error");
-	}
-}
-
-export async function createSubmissionAction(
-	formId: string,
-	data: SubmissionData
-): Promise<ResponseData<Submission>> {
-	if (!formId || !data) {
-		return errorResponse("Form ID and data are required");
-	}
-
-	try {
-		const result = await createSubmission(formId, data);
-		revalidatePath("/");
-		return successResponse(result);
-	} catch (error) {
-		console.error("Submissions action POST error:", error);
-
-		if (error instanceof Prisma.PrismaClientKnownRequestError) {
-			switch (error.code) {
-				case "P2003":
-					return errorResponse("Related form not found");
 				default:
 					return errorResponse("Database error");
 			}

@@ -13,17 +13,16 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Field, FieldSettings } from "@/types/field";
+import { Settings } from "lucide-react";
 
 interface FieldSettingsDialogProps {
 	field: Field;
 	onSave: (settings: FieldSettings) => void;
-	children: React.ReactNode;
 }
 
 export function FieldSettingsDialog({
 	field,
 	onSave,
-	children,
 }: FieldSettingsDialogProps) {
 	const [open, setOpen] = useState(false);
 	const [settings, setSettings] = useState<FieldSettings>(field.settings || {});
@@ -277,7 +276,11 @@ export function FieldSettingsDialog({
 
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
-			<DialogTrigger asChild>{children}</DialogTrigger>
+			<DialogTrigger asChild>
+				<Button variant="ghost" size="sm">
+					<Settings className="h-4 w-4" />
+				</Button>
+			</DialogTrigger>
 			<DialogContent className="sm:max-w-[425px]">
 				<DialogHeader>
 					<DialogTitle>Field Settings</DialogTitle>
@@ -287,7 +290,7 @@ export function FieldSettingsDialog({
 					<Button variant="outline" onClick={() => setOpen(false)}>
 						Cancel
 					</Button>
-					<Button onClick={handleSave}>Save Settings</Button>
+					<Button onClick={handleSave}>Save</Button>
 				</div>
 			</DialogContent>
 		</Dialog>

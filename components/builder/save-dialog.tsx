@@ -10,7 +10,7 @@ import {
 	DialogTitle,
 } from "@/components/ui/dialog";
 import { Spinner } from "../ui/spinner";
-import { createFormAction, updateFormAction } from "@/lib/actions";
+import { createFormAction, updateFormAction } from "@/lib/actions/form";
 import type { FormData, PartialFormData } from "@/types/db";
 import { Field } from "@/types/field";
 import { redirect } from "next/navigation";

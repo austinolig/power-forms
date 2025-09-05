@@ -6,10 +6,11 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Toggle } from "@/components/ui/toggle";
-import { Trash2, X, Settings, Zap, Asterisk } from "lucide-react";
+import { Trash2, X, Asterisk, Plus } from "lucide-react";
 import { Field, FieldSettings } from "@/types/field";
-import { getFieldIcon, getFieldTypeName } from "../field-utils";
-import { FieldSettingsDialog } from "./field-settings-dialog";
+import { getFieldIcon, getFieldTypeName } from "./field-helpers";
+import { FieldSettingsDialog } from "./settings-dialog";
+import { FieldLogicDialog } from "./logic-dialog";
 
 interface EditorFieldProps {
 	field: Field;
@@ -22,122 +23,101 @@ export function EditorField({ field, onUpdate, onDelete }: EditorFieldProps) {
 		onUpdate({ ...field, ...updates });
 	};
 
-	const updateOption = (index: number, value: string) => {
-		const newOptions = [...(field.options || [])];
-		newOptions[index] = value;
-		updateField({ options: newOptions });
+	const handleUpdateOption = (index: number, value: string) => {
+		onUpdate({
+			...field,
+			options:
+				field.options?.map((opt, i) => (i === index ? value : opt)) || [],
+		});
 	};
 
-	const addOption = () => {
-		const newOptions = [
-			...(field.options || []),
-			`Option ${(field.options?.length || 0) + 1}`,
-		];
-		updateField({ options: newOptions });
+	const handleAddOption = () => {
+		onUpdate({
+			...field,
+			options: [
+				...(field.options || []),
+				`Option ${(field.options?.length || 0) + 1}`,
+			],
+		});
 	};
 
-	const removeOption = (index: number) => {
-		const newOptions = field.options?.filter((_, i) => i !== index) || [];
-		updateField({ options: newOptions });
+	const handleRemoveOption = (index: number) => {
+		onUpdate({
+			...field,
+			options: field.options?.filter((_, i) => i !== index) || [],
+		});
 	};
 
 	const handleSaveSettings = (settings: FieldSettings) => {
-		updateField({ settings });
+		onUpdate({ ...field, settings });
 	};
 
 	return (
 		<div className="space-y-6">
 			<div className="flex justify-between items-center pb-6 mb-6 border-b">
-				<Badge variant="secondary" className="gap-2">
-					{getFieldIcon(field.type)}
-					{getFieldTypeName(field.type)}
-				</Badge>
-				<div className="flex items-center gap-1">
+				<div className="flex items-center space-x-3">
+					<span>{getFieldIcon(field.type)}</span>
+					<Badge variant="secondary">{getFieldTypeName(field.type)}</Badge>
+				</div>
+				<div className="flex items-center space-x-2">
 					<Toggle
 						pressed={field.required}
 						onPressedChange={(pressed) => updateField({ required: pressed })}
+						aria-label="Toggle required"
 						size="sm"
-						title={field.required ? "Required field" : "Optional field"}
 					>
 						<Asterisk className="h-4 w-4" />
 					</Toggle>
-					<Button
-						variant="ghost"
-						size="sm"
-						onClick={() => {}}
-						className="h-8 w-8 p-0"
-						title="AI Assist"
-					>
-						<Zap className="h-4 w-4" />
-					</Button>
-					<FieldSettingsDialog field={field} onSave={handleSaveSettings}>
-						<Button
-							variant="ghost"
-							size="sm"
-							className="h-8 w-8 p-0"
-							title="Settings"
-						>
-							<Settings className="h-4 w-4" />
-						</Button>
-					</FieldSettingsDialog>
-					<Button
-						variant="ghost"
-						size="sm"
-						onClick={() => onDelete(field.id)}
-						className="text-destructive hover:text-destructive h-8 w-8 p-0"
-						title="Delete field"
-					>
+					<FieldLogicDialog />
+					<FieldSettingsDialog field={field} onSave={handleSaveSettings} />
+					<Button variant="ghost" size="sm" onClick={() => onDelete(field.id)}>
 						<Trash2 className="h-4 w-4" />
 					</Button>
 				</div>
 			</div>
-			<div>
-				<Label className="text-sm mb-2">Label</Label>
+
+			<div className="space-y-2">
+				<Label className="text-sm">Field Label</Label>
 				<Input
 					value={field.label}
 					onChange={(e) => updateField({ label: e.target.value })}
-					placeholder="Field label"
+					placeholder="Enter field label..."
 				/>
 			</div>
-			<div>
-				<Label className="text-sm mb-2">Description (Optional)</Label>
+
+			<div className="space-y-2">
+				<Label className="text-sm">Field Description (Optional)</Label>
 				<Input
 					value={field.description || ""}
 					onChange={(e) => updateField({ description: e.target.value })}
-					placeholder="Description"
+					placeholder="Enter field description..."
 				/>
 			</div>
+
 			{(field.type === "checkbox" || field.type === "radio") && (
-				<div className="space-y-2">
-					<Label className="text-sm font-medium">Options</Label>
-					{(field.options || []).map((option, index) => (
-						<div key={index} className="flex items-center gap-2">
-							<Input
-								value={option}
-								onChange={(e) => updateOption(index, e.target.value)}
-								placeholder={`Option ${index + 1}`}
-								className="flex-1"
-							/>
-							{(field.options?.length || 0) > 1 && (
+				<div className="space-y-4">
+					<Label className="text-sm">Options</Label>
+					<div className="space-y-2">
+						{field.options?.map((option: string, index: number) => (
+							<div key={index} className="flex items-center space-x-2">
+								<Input
+									value={option}
+									onChange={(e) => handleUpdateOption(index, e.target.value)}
+									placeholder="Option text"
+								/>
 								<Button
-									type="button"
-									variant="ghost"
+									variant="outline"
 									size="sm"
-									onClick={() => removeOption(index)}
-									className="text-destructive hover:text-destructive"
+									onClick={() => handleRemoveOption(index)}
+									disabled={field.options?.length === 1}
 								>
 									<X className="h-4 w-4" />
 								</Button>
-							)}
-						</div>
-					))}
-					<Button
-						type="button"
-						variant="ghost"
-						size="sm"
-						onClick={addOption}
-						className="gap-2"
-					>
+							</div>
+						))}
+					</div>
+					<Button variant="outline" size="sm" onClick={handleAddOption}>
+						<Plus className="h-4 w-4" />
 						Add Option
 					</Button>
 				</div>

@@ -1,15 +1,19 @@
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Edit3, Eye, Columns2 } from "lucide-react";
+import { ViewType } from "@/types/field";
 
-export function ViewTabs({
-	currentView,
-	setCurrentView,
-}: {
-	currentView: string;
-	setCurrentView: (view: string) => void;
-}) {
+interface ViewTabsProps {
+	currentView: ViewType;
+	setCurrentView: (view: ViewType) => void;
+}
+
+export function ViewTabs({ currentView, setCurrentView }: ViewTabsProps) {
+	const handleValueChange = (value: string) => {
+		setCurrentView(value as ViewType);
+	};
+
 	return (
-		<Tabs value={currentView} onValueChange={setCurrentView}>
+		<Tabs value={currentView} onValueChange={handleValueChange}>
 			<TabsList>
 				<TabsTrigger value="editor" className="gap-2">
 					<Edit3 className="h-4 w-4" />

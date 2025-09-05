@@ -15,7 +15,7 @@ import {
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { generateSchema, generateDefaultValues } from "./validation";
+import { generateSchema, generateDefaultValues } from "@/lib/validation";
 import { renderField } from "./field-inputs";
 
 interface PreviewPaneProps {
@@ -23,6 +23,7 @@ interface PreviewPaneProps {
 	fields: Field[];
 	title: string;
 	description: string;
+	responseMode?: boolean;
 }
 
 export function PreviewPane({
@@ -30,6 +31,7 @@ export function PreviewPane({
 	fields,
 	title,
 	description,
+	responseMode = false,
 }: PreviewPaneProps) {
 	const formDataSchema = generateSchema(fields);
 	type FormData = z.infer<typeof formDataSchema>;
@@ -45,7 +47,7 @@ export function PreviewPane({
 
 	return (
 		<div className="max-w-2xl mx-auto space-y-6">
-			{!formId && <h2 className="text-lg font-semibold">Preview</h2>}
+			{!responseMode && <h2 className="text-lg font-semibold">Preview</h2>}
 			<p className="text-2xl font-bold">{title}</p>
 			{description && (
 				<p className="text-muted-foreground mt-2">{description}</p>
