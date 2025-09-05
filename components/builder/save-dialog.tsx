@@ -12,7 +12,7 @@ import {
 import { Spinner } from "../ui/spinner";
 import { createFormAction, updateFormAction } from "@/lib/actions";
 import type { FormData, PartialFormData } from "@/types/db";
-import { Field } from "./field-utils";
+import { Field } from "@/types/field";
 import { redirect } from "next/navigation";
 
 interface SaveDialogProps {

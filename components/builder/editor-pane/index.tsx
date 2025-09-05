@@ -5,7 +5,7 @@ import { AddFieldDropdown } from "./add-field-dropdown";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Field } from "../field-utils";
+import { Field } from "@/types/field";
 
 interface EditorPaneProps {
 	fields: Field[];

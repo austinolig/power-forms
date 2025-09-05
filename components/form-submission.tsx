@@ -2,7 +2,7 @@
 
 import React from "react";
 import { PreviewPane } from "@/components/builder/preview-pane";
-import type { Field } from "@/components/builder/field-utils";
+import type { Field } from "@/types/field";
 
 interface FormSubmissionProps {
 	formId: string;

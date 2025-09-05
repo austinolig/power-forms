@@ -4,7 +4,8 @@ import React, { useState, useEffect } from "react";
 import { ViewTabs } from "./view-tabs";
 import { EditorPane } from "./editor-pane";
 import { PreviewPane } from "./preview-pane";
-import { Field, getDefaultLabel } from "./field-utils";
+import { Field } from "@/types/field"
+import { getDefaultLabel } from "./field-utils";
 import { useResponsiveView } from "./use-responsive-view";
 import { SaveDialog } from "./save-dialog";
 import Link from "next/link";

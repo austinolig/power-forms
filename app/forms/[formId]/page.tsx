@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { getFormWithSubmissions } from "@/lib/db";
 import { FormSubmission } from "@/components/form-submission";
-import type { Field } from "@/components/builder/field-utils";
+import type { Field } from "@/types/field";
 
 interface FormPageProps {
 	params: Promise<{ formId: string }>;

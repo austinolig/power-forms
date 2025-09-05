@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { getFormWithSubmissions } from "@/lib/db";
 import { Builder } from "@/components/builder";
-import type { Field } from "@/components/builder/field-utils";
+import type { Field } from "@/types/field";
 
 interface EditFormPageProps {
 	params: Promise<{ formId: string }>;

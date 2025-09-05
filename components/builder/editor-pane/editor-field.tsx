@@ -7,12 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Toggle } from "@/components/ui/toggle";
 import { Trash2, X, Settings, Zap, Asterisk } from "lucide-react";
-import {
-	Field,
-	getFieldIcon,
-	getFieldTypeName,
-	FieldSettings,
-} from "../field-utils";
+import { Field, FieldSettings } from "@/types/field";
+import { getFieldIcon, getFieldTypeName } from "../field-utils";
 import { FieldSettingsDialog } from "./field-settings-dialog";
 
 interface EditorFieldProps {

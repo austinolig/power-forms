@@ -1,29 +1,5 @@
 import { AlignLeft, CheckSquare, Circle, Hash, Mail, Type } from "lucide-react";
 
-export type Field = {
-	id: string;
-	type: string;
-	label: string;
-	description?: string;
-	options?: string[];
-	required?: boolean;
-	settings?: FieldSettings;
-};
-
-export type FieldSettings = {
-	placeholder?: string;
-	minLength?: number;
-	maxLength?: number;
-	min?: number;
-	max?: number;
-	step?: number;
-	rows?: number;
-	pattern?: string;
-	allowedDomains?: string[];
-	minSelections?: number;
-	maxSelections?: number;
-};
-
 export const getFieldIcon = (type: string) => {
 	switch (type) {
 		case "text":
