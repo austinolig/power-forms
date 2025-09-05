@@ -6,9 +6,8 @@
 
 ## Features
 
-- **Drag-and-Drop Builder** — add, remove, and rearrange fields
-- **Real-time Preview** — preview updates as you edit
-- **Conditional Logic** — show/hide fields based on specific conditions
+- **Real-time Preview** — editor, preview, and split view builder modes
+- **Conditional Logic** — show/hide fields based on specific conditions (not yet implemented)
 - **Validation** — custom field validation
 - **Capture & Export** — collect submissions and export data
 - **Publish & Share** — save and share forms via unique URLs
@@ -18,8 +17,10 @@
 
 - **React + Next.js**
 - **TypeScript**
-- **Tailwind CSS**
-- **Postgres + Primsa ORM**
+- **Tailwind CSS + shadcn/ui**
+- **Zod Validation + React Hook Form**
+- **Postgres + Prisma ORM**
+- **Jest Testing Library**
 
 ## Getting Started
 
