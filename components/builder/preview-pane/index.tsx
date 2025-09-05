@@ -17,6 +17,8 @@ import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { generateSchema, generateDefaultValues } from "@/lib/validation";
 import { renderField } from "./field-inputs";
+import { createSubmissionAction } from "@/lib/actions/submission";
+import { SubmissionData } from "@/types/db";
 
 interface PreviewPaneProps {
 	formId?: string;
@@ -41,8 +43,30 @@ export function PreviewPane({
 		defaultValues: generateDefaultValues(fields),
 	});
 
-	function onSubmit(values: FormData) {
-		console.log(values);
+	async function onSubmit(values: FormData) {
+		console.log("Validating Form Values:", values);
+
+		const result = formDataSchema.safeParse(values);
+		if (result.success) {
+			console.log("Client-side validation successful.");
+
+			const result = await createSubmissionAction(
+				formId!,
+				values as SubmissionData,
+				fields
+			);
+
+			if (result.success) {
+				alert("Form submitted successfully!");
+				form.reset();
+			} else {
+				alert("Submission failed.");
+				console.error(result.error);
+			}
+		} else {
+			console.log("Client-side validation failed! See console for details.");
+			console.error(result.error);
+		}
 	}
 
 	return (

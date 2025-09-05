@@ -6,13 +6,26 @@ import type { ResponseData } from "@/types/actions";
 import { Prisma, type Submission } from "@prisma/client";
 import { successResponse, errorResponse } from "../utils";
 import { revalidatePath } from "next/cache";
+import { generateSchema } from "../validation";
+import type { Field } from "@/types/field";
 
 export async function createSubmissionAction(
 	formId: string,
-	data: SubmissionData
+	data: SubmissionData,
+	fields?: Field[]
 ): Promise<ResponseData<Submission>> {
 	if (!formId || !data) {
 		return errorResponse("Form ID and data are required");
+	}
+
+	if (fields) {
+		const formSchema = generateSchema(fields);
+		const result = formSchema.safeParse(data);
+		if (!result.success) {
+			console.error("Server validation failed:", result.error);
+			return errorResponse("Validation failed");
+		}
+		console.log("Server validation successful");
 	}
 
 	try {

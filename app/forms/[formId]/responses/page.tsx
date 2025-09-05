@@ -24,6 +24,12 @@ export default async function FormResponsesPage({
 	return (
 		<div className="container mx-auto py-8">
 			<div className="flex justify-between items-center mb-6">
+				<Link href={"/"} className="text-blue-600 hover:underline">
+					← Back to Forms
+				</Link>
+			</div>
+
+			<div className="flex justify-between items-center mb-6">
 				<div>
 					<h1 className="text-2xl font-bold">Form Responses</h1>
 					<p className="text-muted-foreground">Total responses: {total}</p>
