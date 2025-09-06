@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { getFormWithSubmissions } from "@/lib/db";
-import { FormSubmission } from "@/components/form-submission";
-import type { Field } from "@/components/builder/field-utils";
+import { PreviewPane } from "@/components/builder/preview-pane";
+import type { Field } from "@/types/field";
 
 interface FormPageProps {
 	params: Promise<{ formId: string }>;
@@ -17,11 +17,16 @@ export default async function FormPage({ params }: FormPageProps) {
 	}
 
 	return (
-		<FormSubmission
-			formId={form.id}
-			title={form.title}
-			description={form.description || ""}
-			fields={(form.fields as Field[]) || []}
-		/>
+		<div className="min-h-screen bg-gray-50 py-12 px-4">
+			<div className="max-w-2xl mx-auto">
+				<PreviewPane
+					formId={form.id}
+					fields={(form.fields as Field[]) || []}
+					title={form.title}
+					description={form.description || ""}
+					responseMode={true}
+				/>
+			</div>
+		</div>
 	);
 }

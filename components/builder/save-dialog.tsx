@@ -10,9 +10,10 @@ import {
 	DialogTitle,
 } from "@/components/ui/dialog";
 import { Spinner } from "../ui/spinner";
-import { createFormAction, updateFormAction } from "@/lib/actions";
+import { createFormAction, updateFormAction } from "@/lib/actions/form";
 import type { FormData, PartialFormData } from "@/types/db";
-import { Field } from "./field-utils";
+import { Field } from "@/types/field";
+import { redirect } from "next/navigation";
 
 interface SaveDialogProps {
 	formId?: string;
@@ -71,6 +72,12 @@ export function SaveDialog({
 		setDialogOpen(true);
 	};
 
+	function handleClose() {
+		if (!formId && dialogTitle === "Success") {
+			redirect("/");
+		}
+	}
+
 	return (
 		<>
 			<Button onClick={handleSave} disabled={isSaving}>
@@ -85,7 +92,7 @@ export function SaveDialog({
 					</DialogHeader>
 					<DialogFooter>
 						<DialogClose asChild className="w-full">
-							<Button>Ok</Button>
+							<Button onClick={handleClose}>Ok</Button>
 						</DialogClose>
 					</DialogFooter>
 				</DialogContent>

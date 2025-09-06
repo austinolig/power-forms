@@ -6,10 +6,11 @@ import {
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Plus } from "lucide-react";
-import { getFieldIcon, getFieldTypeName } from "../field-utils";
+import { getFieldIcon, getFieldTypeName } from "./field-helpers";
+import { FIELD_TYPES, FieldType } from "@/types/field";
 
 interface AddFieldDropdownProps {
-	onAddField: (type: string, insertIndex?: number) => void;
+	onAddField: (type: FieldType, insertIndex?: number) => void;
 	insertIndex?: number;
 }
 
@@ -17,15 +18,6 @@ export function AddFieldDropdown({
 	onAddField,
 	insertIndex,
 }: AddFieldDropdownProps) {
-	const fieldTypes = [
-		"text",
-		"number",
-		"email",
-		"textarea",
-		"checkbox",
-		"radio",
-	];
-
 	return (
 		<DropdownMenu>
 			<DropdownMenuTrigger asChild>
@@ -35,7 +27,7 @@ export function AddFieldDropdown({
 				</Button>
 			</DropdownMenuTrigger>
 			<DropdownMenuContent>
-				{fieldTypes.map((type) => (
+				{FIELD_TYPES.map((type) => (
 					<DropdownMenuItem
 						key={type}
 						onClick={() => onAddField(type, insertIndex)}

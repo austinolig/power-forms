@@ -1,11 +1,12 @@
 "use client";
+
 import React from "react";
 import { EditorField } from "./editor-field";
 import { AddFieldDropdown } from "./add-field-dropdown";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Field } from "../field-utils";
+import { Field, FieldType } from "@/types/field";
 
 interface EditorPaneProps {
 	fields: Field[];
@@ -13,7 +14,7 @@ interface EditorPaneProps {
 	formDescription: string;
 	onTitleChange: (title: string) => void;
 	onDescriptionChange: (description: string) => void;
-	onAddField: (type: string, insertIndex?: number) => void;
+	onAddField: (type: FieldType, insertIndex?: number) => void;
 	onUpdateField: (updatedField: Field) => void;
 	onDeleteField: (id: string) => void;
 }

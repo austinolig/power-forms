@@ -2,8 +2,8 @@ import {
 	createFormAction,
 	updateFormAction,
 	deleteFormAction,
-	createSubmissionAction,
-} from "@/lib/actions";
+} from "@/lib/actions/form";
+import { createSubmissionAction } from "@/lib/actions/submission";
 import {
 	getFormWithSubmissions,
 	getFormsWithPagination,

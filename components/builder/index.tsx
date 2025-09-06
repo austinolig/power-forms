@@ -1,13 +1,15 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { ViewTabs } from "./view-tabs";
+import { SaveDialog } from "./save-dialog";
+import { useFormBuilder } from "@/lib/hooks/use-form-builder";
+import { useResponsiveView } from "@/lib/hooks/use-responsive-view";
+import { VIEW_TYPES } from "@/types/field";
 import { EditorPane } from "./editor-pane";
 import { PreviewPane } from "./preview-pane";
-import { Field, getDefaultLabel } from "./field-utils";
-import { useResponsiveView } from "./use-responsive-view";
-import { SaveDialog } from "./save-dialog";
 import Link from "next/link";
+import { Field } from "@/types/field";
 
 interface BuilderProps {
 	initialFormId?: string;
@@ -18,61 +20,43 @@ interface BuilderProps {
 
 export function Builder({
 	initialFormId,
-	initialTitle = "Untitled Form",
-	initialDescription = "",
-	initialFields = [],
+	initialTitle,
+	initialDescription,
+	initialFields,
 }: BuilderProps) {
-	const { currentView, setCurrentView } = useResponsiveView("editor");
+	const { currentView, setCurrentView } = useResponsiveView(VIEW_TYPES.EDITOR);
 
-	const [formTitle, setFormTitle] = useState<string>(initialTitle);
-	const [formDescription, setFormDescription] =
-		useState<string>(initialDescription);
-	const [fields, setFields] = useState<Field[]>(initialFields);
+	const {
+		formTitle,
+		formDescription,
+		fields,
+		setFormTitle,
+		setFormDescription,
+		handleAddField,
+		handleUpdateField,
+		handleRemoveField,
+	} = useFormBuilder({
+		initialTitle,
+		initialDescription,
+		initialFields,
+	});
 
-	useEffect(() => {
-		if (initialTitle !== "Untitled Form") {
-			setFormTitle(initialTitle);
-		}
-		if (initialDescription) {
-			setFormDescription(initialDescription);
-		}
-		if (initialFields.length > 0) {
-			setFields(initialFields);
-		}
-	}, [initialTitle, initialDescription, initialFields]);
-
-	const handleAddField = (type: string, insertIndex?: number) => {
-		const newField: Field = {
-			id: crypto.randomUUID(),
-			type: type,
-			label: getDefaultLabel(type),
-			required: false,
-			...(type === "checkbox" || type === "radio"
-				? { options: ["Option 1", "Option 2", "Option 3"] }
-				: {}),
-		};
-
-		if (insertIndex !== undefined) {
-			setFields((prevFields) => {
-				const newFields = [...prevFields];
-				newFields.splice(insertIndex + 1, 0, newField);
-				return newFields;
-			});
-		} else {
-			setFields((prevFields) => [...prevFields, newField]);
-		}
+	const editorProps = {
+		fields,
+		formTitle,
+		formDescription,
+		onTitleChange: setFormTitle,
+		onDescriptionChange: setFormDescription,
+		onAddField: handleAddField,
+		onUpdateField: handleUpdateField,
+		onDeleteField: handleRemoveField,
 	};
 
-	const handleUpdateField = (updatedField: Field) => {
-		setFields((prevFields) =>
-			prevFields.map((field) =>
-				field.id === updatedField.id ? updatedField : field
-			)
-		);
-	};
-
-	const handleRemoveField = (id: string) => {
-		setFields((prevFields) => prevFields.filter((field) => field.id !== id));
+	const previewProps = {
+		formId: initialFormId,
+		fields,
+		title: formTitle,
+		description: formDescription,
 	};
 
 	return (
@@ -92,53 +76,24 @@ export function Builder({
 				</div>
 			</div>
 			<div className="flex-1 overflow-hidden">
-				{currentView === "split" && (
+				{currentView === VIEW_TYPES.SPLIT && (
 					<div className="flex h-full">
 						<div className="w-1/2 h-full overflow-y-auto p-6 border-r bg-background">
-							<EditorPane
-								fields={fields}
-								formTitle={formTitle}
-								formDescription={formDescription}
-								onTitleChange={setFormTitle}
-								onDescriptionChange={setFormDescription}
-								onAddField={handleAddField}
-								onUpdateField={handleUpdateField}
-								onDeleteField={handleRemoveField}
-							/>
+							<EditorPane {...editorProps} />
 						</div>
-
 						<div className="w-1/2 h-full overflow-y-auto p-6 bg-muted/20">
-							<PreviewPane
-								fields={fields}
-								title={formTitle}
-								description={formDescription}
-							/>
+							<PreviewPane {...previewProps} />
 						</div>
 					</div>
 				)}
-
-				{currentView === "editor" && (
+				{currentView === VIEW_TYPES.EDITOR && (
 					<div className="h-full overflow-y-auto p-6 bg-background">
-						<EditorPane
-							fields={fields}
-							formTitle={formTitle}
-							formDescription={formDescription}
-							onTitleChange={setFormTitle}
-							onDescriptionChange={setFormDescription}
-							onAddField={handleAddField}
-							onUpdateField={handleUpdateField}
-							onDeleteField={handleRemoveField}
-						/>
+						<EditorPane {...editorProps} />
 					</div>
 				)}
-
-				{currentView === "preview" && (
+				{currentView === VIEW_TYPES.PREVIEW && (
 					<div className="h-full overflow-y-auto p-6 bg-muted/20">
-						<PreviewPane
-							fields={fields}
-							title={formTitle}
-							description={formDescription}
-						/>
+						<PreviewPane {...previewProps} />
 					</div>
 				)}
 			</div>
