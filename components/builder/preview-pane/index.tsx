@@ -44,27 +44,18 @@ export function PreviewPane({
 	});
 
 	async function onSubmit(values: FormData) {
-		console.log("Validating Form Values:", values);
+		console.log("Client-side validation successful.");
+		const result = await createSubmissionAction(
+			formId!,
+			values as SubmissionData,
+			fields
+		);
 
-		const result = formDataSchema.safeParse(values);
 		if (result.success) {
-			console.log("Client-side validation successful.");
-
-			const result = await createSubmissionAction(
-				formId!,
-				values as SubmissionData,
-				fields
-			);
-
-			if (result.success) {
-				alert("Form submitted successfully!");
-				form.reset();
-			} else {
-				alert("Submission failed.");
-				console.error(result.error);
-			}
+			alert("Form submitted successfully!");
+			form.reset();
 		} else {
-			console.log("Client-side validation failed! See console for details.");
+			alert("Submission failed.");
 			console.error(result.error);
 		}
 	}
@@ -108,7 +99,9 @@ export function PreviewPane({
 								)}
 							/>
 						))}
-						<Button type="submit">Submit</Button>
+						<Button disabled={!responseMode} type="submit">
+							Submit
+						</Button>
 					</form>
 				</Form>
 			)}

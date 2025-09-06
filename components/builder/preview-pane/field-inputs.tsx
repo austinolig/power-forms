@@ -38,13 +38,13 @@ export function renderField(field: Field, formField: ControllerRenderProps) {
 									checked={formField.value?.includes(option) || false}
 									onCheckedChange={(checked) => {
 										const currentValue = formField.value || [];
-										return checked
-											? formField.onChange([...currentValue, option])
-											: formField.onChange(
-													currentValue.filter(
-														(value: string) => value !== option
-													)
-												);
+										if (checked) {
+											formField.onChange([...currentValue, option]);
+										} else {
+											formField.onChange(
+												currentValue.filter((value: string) => value !== option)
+											);
+										}
 									}}
 								/>
 							</FormControl>

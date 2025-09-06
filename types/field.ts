@@ -1,6 +1,6 @@
 export type Field = {
 	id: string;
-	type: string;
+	type: FieldType;
 	label: string;
 	description?: string;
 	options?: string[];
