@@ -7,10 +7,10 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Plus } from "lucide-react";
 import { getFieldIcon, getFieldTypeName } from "./field-helpers";
-import { FIELD_TYPES } from "@/types/field";
+import { FIELD_TYPES, FieldType } from "@/types/field";
 
 interface AddFieldDropdownProps {
-	onAddField: (type: string, insertIndex?: number) => void;
+	onAddField: (type: FieldType, insertIndex?: number) => void;
 	insertIndex?: number;
 }
 

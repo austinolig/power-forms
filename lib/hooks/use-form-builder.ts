@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Field } from "@/types/field";
+import { Field, FieldType } from "@/types/field";
 import { getDefaultLabel } from "@/components/builder/editor-pane/field-helpers";
 import { DEFAULT_FIELD_OPTIONS } from "@/types/field";
 
@@ -33,7 +33,7 @@ export function useFormBuilder({
 		}
 	}, [initialTitle, initialDescription, initialFields]);
 
-	const handleAddField = (type: string, insertIndex?: number) => {
+	const handleAddField = (type: FieldType, insertIndex?: number) => {
 		const newField: Field = {
 			id: crypto.randomUUID(),
 			type: type,
