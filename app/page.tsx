@@ -215,7 +215,7 @@ export default function HomePage() {
 							</motion.p>
 						</motion.div>
 
-						<div className="grid lg:grid-cols-2 gap-16 lg:gap-24">
+						<div className="grid md:grid-cols-2 gap-16 lg:gap-24">
 							{features.map((feature, index) => (
 								<motion.div
 									key={feature.title}
@@ -227,7 +227,7 @@ export default function HomePage() {
 										index % 2 === 0 ? "lg:flex-row" : "lg:flex-row-reverse"
 									} items-center gap-8`}
 								>
-									<div className="flex-1 space-y-6">
+									<div className="flex-1 w-full space-y-6">
 										<div className="relative">
 											<div className="flex items-center gap-4 mb-4">
 												<div className="p-3 bg-linear-to-br/oklch from-brand-blue/20 to-brand-red/10 rounded-xl">
@@ -247,7 +247,7 @@ export default function HomePage() {
 											</p>
 										</div>
 									</div>
-									<div className="flex-1">
+									<div className="flex-1 w-full">
 										<div className="relative bg-gradient-to-br from-white/50 to-slate-100/50 backdrop-blur-sm rounded-2xl p-6 shadow-xl border border-white/20">
 											<div className="aspect-[4/3] bg-gradient-to-br from-slate-100 to-slate-200 rounded-xl flex items-center justify-center">
 												<div className="text-center">
